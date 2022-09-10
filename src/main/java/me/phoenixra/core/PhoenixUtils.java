@@ -27,6 +27,7 @@ public class PhoenixUtils {
         return list;
     }
     public static String colorFormat(String s){
+        if(s==null||s.isBlank()) return s;
         if (getServerVersion() > 15) {
             try {
                 s = translateHexCodes(s);
