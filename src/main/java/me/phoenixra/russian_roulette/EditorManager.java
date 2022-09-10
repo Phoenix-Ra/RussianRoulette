@@ -74,32 +74,13 @@ public class EditorManager {
         inventory.setItem(5, new ItemBuilder().setCustomOwner(SkullSkin.MIN_PLAYERS.getSkin()).setDisplayName("&aMin players").setLores(" ", "&7Right click +1", "&7Left click -1"," ", "&eCurrent: &f" + (editor.getMinPlayers())).getItem());
         inventory.setItem(7, new ItemBuilder().setCustomOwner(SkullSkin.WAITING.getSkin()).setDisplayName("&aSpectator's spawn point").setLores(" ", "&eStatus: " + (editor.getSpectatorSpawn() != null ? "&a\u2714" : "&c\u2718"), " ", "&eClick to set!").getItem());
         inventory.setItem(21, new ItemBuilder().setCustomOwner(setupReady(player) == null ? SkullSkin.CHECKMARK_GREEN.getSkin() : SkullSkin.CHECKMARK_RED.getSkin()).setDisplayName(setupReady(player) == null ? "&aFinish editing" : "&cFinish editing").setLores(" ", setupReady(player) == null ? "&eClick to finish" : "&cArena wasn't fully configured").getItem());
-        inventory.setItem(22, new ItemBuilder().setCustomOwner(SkullSkin.QUESTION.getSkin()).setDisplayName("&aInfo").setLores(" ", setupReady(player) == null ? "&aYou can now finish editing" : "&7Required to finish editing: ", setupReady(player)).getItem());
+        inventory.setItem(22, new ItemBuilder().setCustomOwner(SkullSkin.QUESTION.getSkin()).setDisplayName("&aInfo").setLores(" ", setupReady(player) == null ? "&aYou can now finish editing" : "&7Required to finish editing: ", setupReady(player) == null ?"":setupReady(player)).getItem());
         inventory.setItem(23, new ItemBuilder().setCustomOwner(SkullSkin.CANCEL.getSkin()).setDisplayName("&4Cancel editing").getItem());
         player.openInventory(inventory);
 
 
     }
 
-    public void clearPlayerCache(Player player) {
-        ArenaEditor editor = edits.get(player);
-        if (editor == null) {
-            return;
-        }
-        edits.remove(player);
-        List<PhoenixHologram> list = armorStands.containsKey(player) ? armorStands.get(player) : new ArrayList<>();
-        for (PhoenixHologram holo : list) {
-            holo.clearLines();
-        }
-        armorStands.remove(player);
-
-        player.closeInventory();
-        player.getInventory().clear();
-        if (oldPos.containsKey(player)) {
-            player.teleport(oldPos.get(player));
-        }
-        oldPos.remove(player);
-    }
 
     public void cancel(Player player) {
         ArenaEditor editor = edits.get(player);
@@ -132,7 +113,7 @@ public class EditorManager {
         plugin.getGameM().serializeArenas();
 
         clearPlayerCache(player);
-        player.sendMessage(PhoenixUtils.colorFormat("&aYou successfully" + (oldArena == null ? "created" : "edited") + "arena"));
+        player.sendMessage(PhoenixUtils.colorFormat("&aYou successfully " + (oldArena == null ? "created " : "edited ") + "arena"));
     }
 
     public String setupReady(Player player) {
@@ -201,7 +182,30 @@ public class EditorManager {
         list.add(hologram);
         armorStands.put(player, list);
     }
+    public void clearPlayerCache(Player player) {
+        ArenaEditor editor = edits.get(player);
+        if (editor == null) {
+            return;
+        }
+        List<PhoenixHologram> list = armorStands.containsKey(player) ? armorStands.get(player) : new ArrayList<>();
+        for (PhoenixHologram holo : list) {
+            holo.clearLines();
+        }
 
+        player.closeInventory();
+        player.getInventory().clear();
+        if (oldPos.containsKey(player)) {
+            player.teleport(oldPos.get(player));
+        }
+        edits.remove(player);
+        armorStands.remove(player);
+        oldPos.remove(player);
+    }
+    public void clearCache(){
+        for(Player player : edits.keySet()){
+            clearPlayerCache(player);
+        }
+    }
 
     public ArenaEditor getPlayerEdit(Player player) {
         return edits.get(player);
