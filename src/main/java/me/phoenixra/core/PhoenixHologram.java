@@ -45,7 +45,7 @@ public class PhoenixHologram {
         setVisible(true);
     }
     public void addLine(String line){
-        location.add(0, heightBetweenLines, 0);
+        location.add(0, lines.size()*heightBetweenLines, 0);
         ArmorStand armorStand = (ArmorStand) location.getWorld().spawnEntity(location, EntityType.ARMOR_STAND);
         armorStand.setCanPickupItems(false);
         armorStand.setCustomNameVisible(true);
@@ -56,7 +56,7 @@ public class PhoenixHologram {
 
         lines.add(armorStand);
 
-        location.subtract(0, heightBetweenLines, 0);
+        location.subtract(0, lines.size()*heightBetweenLines, 0);
     }
     public void teleport(Location loc) {
         if (loc == null)
