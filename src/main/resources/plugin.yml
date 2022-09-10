@@ -1,0 +1,15 @@
+name: RussianRoulette
+main: me.phoenixra.russian_roulette.RussianRoulette
+version: 1.0
+author: PhoenixRa
+api-version: 1.16
+commands:
+  rr:
+    description: for players
+    usage: /rr
+  rradmin:
+    description: for admins
+    usage: /rradmin
+  rrarena:
+    description: to create the arena
+    usage: /rrarena
