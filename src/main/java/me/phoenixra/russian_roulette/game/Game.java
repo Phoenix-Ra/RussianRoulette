@@ -571,7 +571,11 @@ public class Game {
             p.removePotionEffect(potionEffect.getType());
         }
         RussianRoulette.getInstance().getSeatManager().setSitting(p, false);
-        p.teleport(RussianRoulette.getInstance().getConfigFile().getLobby());
+        if(RussianRoulette.getInstance().getConfigFile().getLobby()==null) {
+            Bukkit.getConsoleSender().sendMessage("RussianRoulette: lobby isn't set");
+
+        }else p.teleport(RussianRoulette.getInstance().getConfigFile().getLobby());
+
         showAll(p);
         Utils.separatePlayer(p);
     }
