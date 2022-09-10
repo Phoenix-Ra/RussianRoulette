@@ -57,6 +57,10 @@ public class RussianRoulette extends JavaPlugin {
 
     @Override
     public void onDisable(){
+        if(gameM!=null){
+            gameM.clear();
+        }
+        editorM.clearCache();
 
     }
     public void loadArenas() {

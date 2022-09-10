@@ -51,7 +51,7 @@ public class Game {
 
         timer = new GameTask(Game.this);
         gameHologram = new GameHologram(this.getArena().getCenter().getLocation().add(0, 5, 0));
-
+        gameHologram.setGameHolo(this);
 
     }
 
@@ -72,7 +72,7 @@ public class Game {
     }
 
     public void enableGame() {
-        gameHologram.setVisible(true);
+        gameHologram.clearLines();
         state = GameState.PENDING_FOR_PLAYERS;
     }
 
@@ -84,7 +84,7 @@ public class Game {
                 this.playerLeave(p);
             }
         }
-        gameHologram.setVisible(false);
+        gameHologram.clearLines();
         state = GameState.DISABLED;
     }
 

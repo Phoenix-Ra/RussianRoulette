@@ -15,9 +15,8 @@ public class GameHologram extends PhoenixHologram {
     }
 
     public void setGameHolo(Game game) {
-
+        clearLines();
         if(game.getState()== Game.GameState.STARTING) {
-            clearLines();
             b=false;
             if(game.getState()== Game.GameState.PENDING_FOR_PLAYERS) {
                 for(String string: LangClass.hologram_PendingForPlayers) {
@@ -32,7 +31,6 @@ public class GameHologram extends PhoenixHologram {
             switch (game.getTimer().getCurrentTimer()){
                 case NEXT_SHOOTER_DELAY:
                     if(game.getRoundCache()!=null&&!b) {
-                        clearLines();
                         b=true;
                         Random r=new Random(System.nanoTime());
                         String line= game.getRoundCache().shootSuccess()?
@@ -47,21 +45,18 @@ public class GameHologram extends PhoenixHologram {
                     }
                     break;
                 case NEXT_ROUND_DELAY:
-                    clearLines();
                     b=false;
                     for(String s: LangClass.hologram_RoundDelay) {
                         addLine(Replace(s,game));
                     }
                     break;
                 case SHOOTER_DECIDING:
-                    clearLines();
                     b=false;
                     for(String s: LangClass.hologram_WaitingForShooter) {
                         addLine(Replace(s,game));
                     }
                     break;
                 case BID_TIME:
-                    clearLines();
                     b=false;
                     for(String s: LangClass.hologram_BetTime) {
                         addLine(Replace(s,game));

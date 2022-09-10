@@ -57,6 +57,11 @@ public class GameManager {
     }
 
 
+    public void clear(){
+        for (Game g : games) {
+            g.disableGame();
+        }
+    }
     public void serializeArenas(){
         new BukkitRunnable(){
             @Override
@@ -100,6 +105,7 @@ public class GameManager {
         }
         return new ArrayList<>();
     }
+
 
     public void addPlayerToGame(Game g, Player p) {
         players_in_game.put(p, g);
