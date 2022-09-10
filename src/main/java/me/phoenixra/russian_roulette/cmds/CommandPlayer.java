@@ -49,7 +49,7 @@ public class CommandPlayer extends PhoenixCommand {
         }
 
     }
-    @SubCommand(description = "Помощь", minArgs = -1, usage = "/rr help")
+    @SubCommand(description = "available commands", minArgs = -1, usage = "/rr help")
     public void help() {
         this.reply("§7[§eRussianRoulette§7] - §aAvailable commands:");
         for (Entry<String, Method> entry : methods.entrySet()) {

@@ -1,15 +1,11 @@
 package me.phoenixra.russian_roulette.cmds;
 
 import com.google.common.collect.Maps;
-import me.phoenixra.core.Holo;
 import me.phoenixra.core.PhoenixCommand;
 import me.phoenixra.russian_roulette.RussianRoulette;
 import me.phoenixra.russian_roulette.files.LangClass;
-import org.bukkit.entity.Player;
-
 import java.lang.reflect.Method;
 import java.util.Map;
-import java.util.Set;
 
 public class CommandAdmin extends PhoenixCommand {
     private final RussianRoulette plugin;

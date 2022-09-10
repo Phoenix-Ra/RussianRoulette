@@ -62,18 +62,18 @@ public class CommandArena extends PhoenixCommand {
     @SubCommand(description = "commands list", minArgs = -1, usage = "/rrarena help")
     public void help() {
         String[] s = {"help", "create", "edit", "getitems", "remove","list", "setmainlobby"};
-        this.reply("&7[§aRussianRoulette&7_&eArena§7] - §aДоступные команды:");
+        this.reply("&7[§aRussianRoulette&7_&eArena§7] - §aAvailable commands:");
         for (String entry : s) {
 
             final SubCommand info = methods.get(entry).getAnnotation(SubCommand.class);
             final String usage = info.usage().isEmpty() ? "" : (" " + (info.usage()));
             final String desc = info.description();
-            this.reply("&7[§aRussianRoulette&7_&eArena§7]:&c " + usage + " &7- &f" + desc);
+            this.reply("&c " + usage + " &7- &f" + desc);
         }
 
     }
 
-    @SubCommand(description = "Редактировать существующую арену", minArgs = 1, usage = "/rrarena create [название арены]")
+    @SubCommand(description = "Create new arena", minArgs = 1, usage = "/rrarena create [arena name]")
     public void create() {
         String name=this.getArg(1);
         for(Arena arena : plugin.getGameM().getArenas()) {
@@ -95,7 +95,7 @@ public class CommandArena extends PhoenixCommand {
 
     }
 
-    @SubCommand(description = "Редактировать существующую арену", minArgs = 1, usage = "/rrarena edit [название арены]")
+    @SubCommand(description = "Edit existing arena", minArgs = 1, usage = "/rrarena edit [arena name]")
     public void edit() {
         String name=this.getArg(1);
         boolean b = false;
@@ -117,20 +117,20 @@ public class CommandArena extends PhoenixCommand {
         plugin.getEditM().startEditArena(player, name);
 
     }
-    @SubCommand(description = "Выдает предметы редактирования, введите если вы их потеряли", minArgs = -1, usage = "/rrarena getitems")
+    @SubCommand(description = "gives items to edit the arena. Use it if you lost them", minArgs = -1, usage = "/rrarena getitems")
     public void getItems() {
         if(!plugin.getEditM().giveEditItems(player)) {
             this.reply("&cCurrently you aren't editing any arena");
             return;
         }
-        this.reply("&aВыдано, не теряйте)");
+        this.reply("&aItems has been given");
     }
-    @SubCommand(description = "Установить главное лобби", minArgs = -1, usage = "/rrarena setMainLobby")
+    @SubCommand(description = "setup main lobby", minArgs = -1, usage = "/rrarena setMainLobby")
     public void setMainLobby() {
         RussianRoulette.getInstance().getConfigFile().setLobby(player.getLocation());
         this.reply("&aMain lobby successfully installed");
     }
-    @SubCommand(description = "Удалить арену", minArgs = -1, usage = "/rrarena remove")
+    @SubCommand(description = "remove arena", minArgs = -1, usage = "/rrarena remove")
     public void remove() {
         String name=this.getArg(1);
         boolean b = false;
@@ -152,7 +152,7 @@ public class CommandArena extends PhoenixCommand {
         RussianRoulette.getInstance().getGameM().removeGame(name);
         this.reply("&aArena successfully removed");
     }
-    @SubCommand(description = "Список арен", minArgs = -1, usage = "/rrarena list")
+    @SubCommand(description = "list of loaded arenas", minArgs = -1, usage = "/rrarena list")
     public void list() {
         this.reply("&aLoaded Arenas:");
         for(Arena a : plugin.getGameM().getArenas()) {
