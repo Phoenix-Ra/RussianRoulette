@@ -154,7 +154,7 @@ public class GameListener implements Listener {
                     game.getAlgorithm().shootVictimPrepare(player, victim);
                     game.setVictim(victim);
                 } else {
-                    player.sendMessage("&c&lЭтот игрок уже не играет");
+                    player.sendMessage("&c&lPlayer left the game");
                 }
                 player.closeInventory();
             }
