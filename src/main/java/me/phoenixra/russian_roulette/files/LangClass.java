@@ -144,23 +144,23 @@ public class LangClass extends PhoenixFileClass {
     public static String titles_BecameSpectator = "&cYou are spectator";
 
     @ConfigHeader(value = {""})
-    @ConfigKey(path="YourTurn", space= "    ")
+    @ConfigKey(path="YourTurn", space= "  ")
     public static String titles_yourTurn = "&cYour turn";
 
     @ConfigHeader(value = {""})
-    @ConfigKey(path="secondRoundStart_title", space= "    ")
+    @ConfigKey(path="secondRoundStart_title", space= "  ")
     public static String titles_secondRoundStart_title = "&aRound 2";
 
     @ConfigHeader(value = {""})
-    @ConfigKey(path="secondRoundStart_title", space= "    ")
+    @ConfigKey(path="secondRoundStart_title", space= "  ")
     public static String titles_secondRoundStart_subtitle = "&e'Idk how to name it:('";
 
     @ConfigHeader(value = {""})
-    @ConfigKey(path="finalRoundStart_title", space= "    ")
+    @ConfigKey(path="finalRoundStart_title", space= "  ")
     public static String titles_finalRoundStart_title = "&aFinal round";
 
     @ConfigHeader(value = {""})
-    @ConfigKey(path="finalRoundStart_title", space= "    ")
+    @ConfigKey(path="finalRoundStart_title", space= "  ")
     public static String titles_finalRoundStart_subtitle = "&e'Firefight!'";
 
     @ConfigHeader(value = { " "})
@@ -168,7 +168,7 @@ public class LangClass extends PhoenixFileClass {
     public static String gui_section;
 
     @ConfigHeader(value = { " "})
-    @ConfigKey(path="GUI", space= "  ", isSection=true)
+    @ConfigKey(path="Game", space= "  ", isSection=true)
     public static String gui_game_section;
 
     @ConfigHeader(value = {""})
@@ -176,7 +176,7 @@ public class LangClass extends PhoenixFileClass {
     public static String gui_game_chooseVictim="&cChoose a victim";
 
     @ConfigHeader(value = { " "})
-    @ConfigKey(path="GUI", space= "  ", isSection=true)
+    @ConfigKey(path="Selector", space= "  ", isSection=true)
     public static String gui_selector_section;
 
     @ConfigHeader(value = {""})
