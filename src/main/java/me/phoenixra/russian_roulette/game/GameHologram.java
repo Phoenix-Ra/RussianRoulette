@@ -16,7 +16,7 @@ public class GameHologram extends PhoenixHologram {
 
     public void setGameHolo(Game game) {
         clearLines();
-        if(game.getState()== Game.GameState.STARTING) {
+        if(game.getState()== Game.GameState.STARTING||game.getState()== Game.GameState.PENDING_FOR_PLAYERS) {
             b=false;
             if(game.getState()== Game.GameState.PENDING_FOR_PLAYERS) {
                 for(String string: LangClass.hologram_PendingForPlayers) {
