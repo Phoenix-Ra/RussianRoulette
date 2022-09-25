@@ -21,7 +21,7 @@ public class CommandPlayer extends PhoenixCommand {
         this.setAllowConsole(false);
         this.setPermission("rr.player");
         this.setUsage("/rr");
-        this.setPrefix(PhoenixUtils.colorFormat("§7[§eRussianRoulette§7]"));
+        this.setPrefix(PhoenixUtils.colorFormat("&7[&eRussianRoulette&7] "));
 
         this.setMsg_unknownCommand(LangClass.general_unknown_cmd);
         this.setMsg_noPermission(LangClass.general_no_permission);

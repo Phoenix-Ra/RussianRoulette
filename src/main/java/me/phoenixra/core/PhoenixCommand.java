@@ -120,13 +120,13 @@ public abstract class PhoenixCommand implements CommandExecutor {
         List<SubCommand> sorted_methods=subCommands.values()
                 .stream().map(method -> method.getAnnotation(SubCommand.class))
                 .sorted(Comparator.comparingInt(SubCommand::sortOrder)).collect(Collectors.toList());
-        this.reply(prefix+"§aAvailable commands:");
+        this.reply("&aAvailable commands:");
         for (SubCommand info : sorted_methods) {
             if(info.usage().equals("defaultHelp")) continue;
             if(!info.permission().isBlank()&&!sender.hasPermission(info.permission())) continue;
             final String usage = info.usage().isEmpty() ? "" : (" " + (info.usage()));
             final String desc = info.description();
-            this.reply("&c " + usage + "&7 - &f" + desc);
+            this.reply("&c " + usage + "&7 - &f" + desc,false);
         }
 
     }

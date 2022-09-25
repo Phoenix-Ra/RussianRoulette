@@ -106,7 +106,7 @@ public class LangClass extends PhoenixFileClass {
     @ConfigKey(path="player_killed_other", space="  ")
     public static List<String> messages_player_killed_other = Arrays.asList(
             "&cPlayer &l%victim%&c will come to the &l%shooter%&c at night as an evil spirit",
-            "&cPlayer &l%shooter%&c killed §l%victim%&c by accident",
+            "&cPlayer &l%shooter%&c killed &l%victim%&c by accident",
             "&cPlayer &l%shooter%&c committed a crime by killing &l%victim%&c, but we won't tell anyone");
 
     @ConfigHeader(value= {""})

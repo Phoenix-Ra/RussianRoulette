@@ -17,7 +17,7 @@ public class CommandArena extends PhoenixCommand {
         this.setAllowConsole(false);
         this.setPermission("rr.create");
         this.setUsage("/rrarena");
-        this.setPrefix(PhoenixUtils.colorFormat("§7[§eRussianRoulette§7]"));
+        this.setPrefix(PhoenixUtils.colorFormat("&7[&eRussianRoulette&7] "));
 
         this.setMsg_unknownCommand(LangClass.general_unknown_cmd);
         this.setMsg_noPermission(LangClass.general_no_permission);
