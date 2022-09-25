@@ -2,6 +2,7 @@ package me.phoenixra.russian_roulette.cmds;
 
 import com.google.common.collect.Maps;
 import me.phoenixra.core.PhoenixCommand;
+import me.phoenixra.core.PhoenixUtils;
 import me.phoenixra.russian_roulette.RussianRoulette;
 import me.phoenixra.russian_roulette.files.LangClass;
 import me.phoenixra.russian_roulette.game.Game;
@@ -20,49 +21,16 @@ public class CommandPlayer extends PhoenixCommand {
         this.setAllowConsole(false);
         this.setPermission("rr.player");
         this.setUsage("/rr");
-        for (final Method method : this.getClass().getMethods()) {
-            final SubCommand subCommand = method.getAnnotation(SubCommand.class);
-            if (subCommand != null) {
-                this.methods.put(subCommand.name().isEmpty() ? method.getName().toLowerCase() : subCommand.name(), method);
-            }
-        }
+        this.setPrefix(PhoenixUtils.colorFormat("§7[§eRussianRoulette§7]"));
+
+        this.setMsg_unknownCommand(LangClass.general_unknown_cmd);
+        this.setMsg_noPermission(LangClass.general_no_permission);
+        this.setMsg_notEnoughArgs(LangClass.general_not_enough_args);
     }
 
-    @Override
-    public void execute() {
-        final String subCommand = (this.getArgLength() > 0) ? this.getArg(0).toLowerCase() : "help";
-        final Method method = this.methods.get(subCommand.toLowerCase());
-        if (method == null) {
-            this.reply(false, LangClass.general_unknown_cmd);
-            return;
-        }
-        final SubCommand info = method.getAnnotation(SubCommand.class);
-        if (this.getArgLength() < info.minArgs() + 1) {
-            this.reply(false, LangClass.general_not_enough_args);
-            return;
-        }
-        try {
-            method.invoke(this);
-        }
-        catch (Exception e) {
-            replyException(e,LangClass.general_error);
-        }
-
-    }
-    @SubCommand(description = "available commands", minArgs = -1, usage = "/rr help")
-    public void help() {
-        this.reply("§7[§eRussianRoulette§7] - §aAvailable commands:");
-        for (Entry<String, Method> entry : methods.entrySet()) {
-            final SubCommand info = entry.getValue().getAnnotation(SubCommand.class);
-            final String usage = info.usage().isEmpty() ? "" : (" " + (info.usage()));
-            final String desc = info.description();
-            this.reply("&c " + usage + " &7- &f" + desc);
-        }
-
-    }
-    @SubCommand(description = "Join the game", minArgs = 1, usage = "/rr join")
+    @SubCommand(description = "Join the game", minArgs = 1, usage = "/rr join", sortOrder = 1)
     public void join() {
-        String name = this.getArg(1);
+        String name = this.getArgument(1);
         Game game = plugin.getGameM().getGame(name);
         if(plugin.getGameM().getPlayerGame(player)!=null) {
             this.reply("&cYou are already in game");
@@ -76,19 +44,7 @@ public class CommandPlayer extends PhoenixCommand {
         game.playerJoin(player);
 
     }
-
-    @SubCommand(description = "Leave the game", minArgs = -1, usage = "/rr leave")
-    public void leave() {
-        Game game = plugin.getGameM().getPlayerGame(player);
-        if(game == null) {
-            this.reply("&cYou aren't in game");
-            return;
-        }
-        game.playerLeave(player);
-
-    }
-
-    @SubCommand(description = "Game selector menu", minArgs = -1, usage = "/rr play")
+    @SubCommand(description = "Game selector menu", minArgs = -1, usage = "/rr play", sortOrder = 2)
     public void play() {
         if(plugin.getGameM().getPlayerGame(this.player)!=null) {
             this.reply("&cYou are already in game");
@@ -98,7 +54,8 @@ public class CommandPlayer extends PhoenixCommand {
         player.playSound(player.getLocation(), GameSounds.menuOpen(), 1.0f, 1.0f);
 
     }
-    @SubCommand(description = "Join random game", minArgs = -1, usage = "/bw join")
+
+    @SubCommand(description = "Join random game", minArgs = -1, usage = "/rr playRandom", sortOrder = 3)
     public void playRandom() {
         Game game;
         if(plugin.getGameM().getPlayerGame(player)!=null) {
@@ -116,7 +73,7 @@ public class CommandPlayer extends PhoenixCommand {
 
     }
 
-    @SubCommand(description = "", minArgs = -1, usage = "/rr sit")
+    @SubCommand(description = "Take a seat", minArgs = -1, usage = "/rr sit", sortOrder = 4)
     public void sit() {
         Game g = plugin.getGameM().getPlayerGame(player);
         if(g==null) {
@@ -124,6 +81,17 @@ public class CommandPlayer extends PhoenixCommand {
             return;
         }
         plugin.getSeatManager().setSitting(player,true);
+
+    }
+
+    @SubCommand(description = "Leave the game", minArgs = -1, usage = "/rr leave", sortOrder = 5)
+    public void leave() {
+        Game game = plugin.getGameM().getPlayerGame(player);
+        if(game == null) {
+            this.reply("&cYou aren't in game");
+            return;
+        }
+        game.playerLeave(player);
 
     }
 

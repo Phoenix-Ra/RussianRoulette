@@ -22,10 +22,6 @@ public class LangClass extends PhoenixFileClass {
     public static String general_not_enough_args = "&cMore arguments needed. /rr help";
 
     @ConfigHeader(value= {""})
-    @ConfigKey(path="error", space="  ")
-    public static String general_error = "&cUnexpected exception while trying to execute the command";
-
-    @ConfigHeader(value= {""})
     @ConfigKey(path="MESSAGES", isSection = true)
     public static String section_messages;
 
@@ -43,7 +39,7 @@ public class LangClass extends PhoenixFileClass {
 
     @ConfigHeader(value= {"#Final round message"})
     @ConfigKey(path="shooterBullets", space="  ")
-    public static String messages_shooterBullets = "%shooter%&&e received&c %bullets%&e  We all wonder, who will become a victim";
+    public static String messages_shooterBullets = "%shooter%&e received&c %bullets%&e  We all wonder, who will become a victim";
 
     @ConfigHeader(value= {""})
     @ConfigKey(path="shooterDecideTooLong", space="  ")
@@ -233,12 +229,12 @@ public class LangClass extends PhoenixFileClass {
     @ConfigKey(path="PendingForPlayers", space= "  ")
     public static List<String> hologram_PendingForPlayers=Arrays.asList(
             "&7>>&cRussian Roulette&7<<",
-            "&eUnique and fun game to test your luck",
+            "&eFunny game to test your luck",
             "",
             "&eArena: &a%arena_name%",
             "&eMin players: &a%min_players%",
             "",
-            "&eWaiting for players...",
+            "&ePending for players...",
             "&e%current_players%/%max_players%");
     @ConfigHeader(value = {""})
     @ConfigKey(path="RoundDelay", space= "  ")
@@ -361,7 +357,7 @@ public class LangClass extends PhoenixFileClass {
     @Override
     public Object getReference(int number) {
         Object[] ob = {section_general, general_unknown_cmd, general_no_permission,
-                general_not_enough_args, general_error,section_messages,
+                general_not_enough_args, section_messages,
                 messages_playerJoined,messages_playerLeft,
                 messages_startTimer,messages_shooterBullets,
                 messages_shooterDecideTooLong,messages_playerEscaped,

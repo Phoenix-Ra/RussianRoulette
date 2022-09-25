@@ -2,6 +2,7 @@ package me.phoenixra.russian_roulette.cmds;
 
 import com.google.common.collect.Maps;
 import me.phoenixra.core.PhoenixCommand;
+import me.phoenixra.core.PhoenixUtils;
 import me.phoenixra.russian_roulette.RussianRoulette;
 import me.phoenixra.russian_roulette.files.LangClass;
 import me.phoenixra.russian_roulette.game.Arena;
@@ -10,72 +11,23 @@ import java.util.Map;
 
 public class CommandArena extends PhoenixCommand {
     private final RussianRoulette plugin;
-    private final Map<String, Method> methods = Maps.newLinkedHashMap();
 
     public CommandArena(RussianRoulette plugin){
         this.plugin = plugin;
         this.setAllowConsole(false);
         this.setPermission("rr.create");
         this.setUsage("/rrarena");
-        for (final Method method : this.getClass().getMethods()) {
-            final SubCommand subCommand = method.getAnnotation(SubCommand.class);
-            if (subCommand != null) {
-                this.methods.put(subCommand.name().isEmpty() ? method.getName().toLowerCase() : subCommand.name(), method);
-            }
-        }
-    }
+        this.setPrefix(PhoenixUtils.colorFormat("§7[§eRussianRoulette§7]"));
 
-    @Override
-    public void execute() {
-        final String subCommand = (this.getArgLength() > 0) ? this.getArg(0).toLowerCase() : "help";
-        final Method method = this.methods.get(subCommand.toLowerCase());
-        if (method == null) {
-            this.reply(false, LangClass.general_unknown_cmd);
-            return;
-        }
-        final SubCommand info = method.getAnnotation(SubCommand.class);
-        if(this.isPlayer) {
-            if(!info.permission().equals("") && !this.player.hasPermission(info.permission())) {
-                this.reply(false,LangClass.general_no_permission);
-                return;
-            }
-        }
-        if (this.getArgLength() < info.minArgs() + 1) {
-            this.reply(false,LangClass.general_not_enough_args);
-            return;
-        }
-        try {
-            method.invoke(this);
-        }
-        catch (Exception e) {
-            replyException(e, LangClass.general_error);
-        }
-
+        this.setMsg_unknownCommand(LangClass.general_unknown_cmd);
+        this.setMsg_noPermission(LangClass.general_no_permission);
+        this.setMsg_notEnoughArgs(LangClass.general_not_enough_args);
     }
 
 
-
-
-
-
-
-    @SubCommand(description = "commands list", minArgs = -1, usage = "/rrarena help")
-    public void help() {
-        String[] s = {"help", "create", "edit", "getitems", "remove","list", "setmainlobby"};
-        this.reply("&7[§aRussianRoulette&7_&eArena§7] - §aAvailable commands:");
-        for (String entry : s) {
-
-            final SubCommand info = methods.get(entry).getAnnotation(SubCommand.class);
-            final String usage = info.usage().isEmpty() ? "" : (" " + (info.usage()));
-            final String desc = info.description();
-            this.reply("&c " + usage + " &7- &f" + desc);
-        }
-
-    }
-
-    @SubCommand(description = "Create new arena", minArgs = 1, usage = "/rrarena create [arena name]")
+    @SubCommand(description = "Create new arena", minArgs = 1, usage = "/rrarena create [arena name]", sortOrder = 1)
     public void create() {
-        String name=this.getArg(1);
+        String name=this.getArgument(1);
         for(Arena arena : plugin.getGameM().getArenas()) {
             if(name.equalsIgnoreCase(arena.getArenaName())){
                 this.reply("&cArena with specified name already exists");
@@ -95,9 +47,9 @@ public class CommandArena extends PhoenixCommand {
 
     }
 
-    @SubCommand(description = "Edit existing arena", minArgs = 1, usage = "/rrarena edit [arena name]")
+    @SubCommand(description = "Edit existing arena", minArgs = 1, usage = "/rrarena edit [arena name]", sortOrder = 2)
     public void edit() {
-        String name=this.getArg(1);
+        String name=this.getArgument(1);
         boolean b = false;
         for(Arena a : plugin.getGameM().getArenas()) {
             if (name.equalsIgnoreCase(a.getArenaName())) {
@@ -117,7 +69,7 @@ public class CommandArena extends PhoenixCommand {
         plugin.getEditM().startEditArena(player, name);
 
     }
-    @SubCommand(description = "gives items to edit the arena. Use it if you lost them", minArgs = -1, usage = "/rrarena getitems")
+    @SubCommand(description = "gives items to edit the arena. Use it if you lost them", minArgs = -1, usage = "/rrarena getitems", sortOrder = 3)
     public void getItems() {
         if(!plugin.getEditM().giveEditItems(player)) {
             this.reply("&cCurrently you aren't editing any arena");
@@ -125,14 +77,14 @@ public class CommandArena extends PhoenixCommand {
         }
         this.reply("&aItems has been given");
     }
-    @SubCommand(description = "setup main lobby", minArgs = -1, usage = "/rrarena setMainLobby")
+    @SubCommand(description = "setup main lobby", minArgs = -1, usage = "/rrarena setMainLobby", sortOrder = 4)
     public void setMainLobby() {
         RussianRoulette.getInstance().getConfigFile().setLobby(player.getLocation());
         this.reply("&aMain lobby successfully installed");
     }
-    @SubCommand(description = "remove arena", minArgs = -1, usage = "/rrarena remove")
+    @SubCommand(description = "remove arena", minArgs = -1, usage = "/rrarena remove", sortOrder = 5)
     public void remove() {
-        String name=this.getArg(1);
+        String name=this.getArgument(1);
         boolean b = false;
         for(Arena a : plugin.getGameM().getArenas()) {
             if (name.equalsIgnoreCase(a.getArenaName())) {
@@ -152,14 +104,14 @@ public class CommandArena extends PhoenixCommand {
         RussianRoulette.getInstance().getGameM().removeGame(name);
         this.reply("&aArena successfully removed");
     }
-    @SubCommand(description = "list of loaded arenas", minArgs = -1, usage = "/rrarena list")
+    @SubCommand(description = "list of loaded arenas", minArgs = -1, usage = "/rrarena list", sortOrder = 6)
     public void list() {
         this.reply("&aLoaded Arenas:");
         for(Arena a : plugin.getGameM().getArenas()) {
             this.reply("&a"+a.getArenaName()+" - "+ RussianRoulette.getInstance().getGameM().getGame(a.getArenaName()).getState().toString());
 
         }
-        this.reply("&7***********************");
-        this.reply("&aTotal amount: " +plugin.getGameM().getArenas().size());
+        this.reply("&7***********************",false);
+        this.reply("&aTotal amount: " +plugin.getGameM().getArenas().size(),false);
     }
 }
