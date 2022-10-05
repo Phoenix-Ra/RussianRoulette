@@ -1,11 +1,14 @@
 package me.phoenixra.russian_roulette;
 
+import lombok.Getter;
 import me.phoenixra.core.files.PhoenixFileManager;
+import me.phoenixra.core.scoreboard.BoardsManager;
 import me.phoenixra.russian_roulette.cmds.CommandAdmin;
 import me.phoenixra.russian_roulette.cmds.CommandArena;
 import me.phoenixra.russian_roulette.cmds.CommandPlayer;
 import me.phoenixra.russian_roulette.files.ConfigFile;
 import me.phoenixra.russian_roulette.files.LangFile;
+import me.phoenixra.russian_roulette.game.ScoreboardBuilder;
 import me.phoenixra.russian_roulette.listeners.*;
 import me.phoenixra.russian_roulette.playerSit.SeatManager;
 import net.milkbowl.vault.chat.Chat;
@@ -18,11 +21,12 @@ import java.util.logging.Level;
 public class RussianRoulette extends JavaPlugin {
     private static  RussianRoulette instance;
     private PhoenixFileManager fileManager;
-    private GameManager gameM;
-    private SeatManager seatManager;
-    private EditorManager editorM;
+    @Getter private GameManager gameM;
+    @Getter private SeatManager seatManager;
+    @Getter private EditorManager editorM;
+    @Getter private BoardsManager boardsManager;
 
-    private Chat vaultChat;
+    @Getter private Chat vaultChat;
     @Override
     public void onEnable(){
         instance=this;
@@ -31,6 +35,8 @@ public class RussianRoulette extends JavaPlugin {
         fileManager.loadfiles();
         seatManager = new SeatManager();
         editorM = new EditorManager();
+        boardsManager = new BoardsManager(this);
+        new ScoreboardBuilder();
         //Vault
         setupChat();
 
@@ -84,18 +90,6 @@ public class RussianRoulette extends JavaPlugin {
         }
     }
 
-    public Chat getVaultChat(){
-        return vaultChat;
-    }
-    public GameManager getGameM() {
-        return gameM;
-    }
-    public EditorManager getEditM() {
-        return this.editorM;
-    }
-    public SeatManager getSeatManager() {
-        return seatManager;
-    }
 
     public ConfigFile getConfigFile() {
         return (ConfigFile) fileManager.getFile("config");

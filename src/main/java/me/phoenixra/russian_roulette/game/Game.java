@@ -60,7 +60,7 @@ public class Game {
         round = GameRound.FIRST;
         for (Player p : this.getPlayers()) {
             p.getInventory().clear();
-            scoreboardBuilder.CreateScoreboard(this, p, ScoreboardBuilder.ScoreboardType.GAME);
+            ScoreboardBuilder.applyScoreboard(p, ScoreboardBuilder.ScoreboardType.GAME);
         }
 
         shooterSeat = victimSeat = findNextShooterSeat(true);
@@ -122,7 +122,7 @@ public class Game {
         p.teleport(getPlayerSeatLocation(p).getLocation());
         RussianRoulette.getInstance().getSeatManager().setSitting(p, true);
 
-        scoreboardBuilder.CreateScoreboard(this, p, ScoreboardBuilder.ScoreboardType.STARTING);
+        ScoreboardBuilder.applyScoreboard(p, ScoreboardBuilder.ScoreboardType.STARTING);
 
         gameAlgorithm.addPlayer(p);
         playerLives.put(p, maxLives);
@@ -224,7 +224,7 @@ public class Game {
         p.getInventory().setItem(8, itemStack);
         p.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 1));
 
-        scoreboardBuilder.CreateScoreboard(this, p, ScoreboardBuilder.ScoreboardType.SPECTATOR);
+        ScoreboardBuilder.applyScoreboard(p, ScoreboardBuilder.ScoreboardType.SPECTATOR);
 
         Utils.separatePlayer(p);
         p.sendTitle(LangClass.titles_BecameSpectator, "");
@@ -551,10 +551,10 @@ public class Game {
         roundCache = null;
     }
 
-    private void clearPlayerCache(Player p) {
-        scoreboardBuilder.removeScoreboard(p);
-        players.remove(p);
-        spectators.remove(p);
+    private void clearPlayerCache(Player p, boolean removeFromList) {
+        ScoreboardBuilder.removeScoreboard(p);
+        if(removeFromList) players.remove(p);
+        if(removeFromList) spectators.remove(p);
         playerLives.remove(p);
         playerSeat.remove(getPlayerSeatLocation(p));
         gameAlgorithm.removePlayer(p);
