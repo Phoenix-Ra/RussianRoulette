@@ -1,33 +1,23 @@
 package me.phoenixra.core;
 
 import com.google.common.base.Preconditions;
+import eu.decentsoftware.holograms.api.DHAPI;
+import eu.decentsoftware.holograms.api.holograms.Hologram;
+import lombok.Getter;
 import org.bukkit.Location;
-import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.EntityType;
-import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class PhoenixHologram {
-    private final List<ArmorStand> lines = new ArrayList<>();
+    @Getter private final String id;
+    private Hologram hologram;
 
-    private Location location;
-    private final double heightBetweenLines;
+    public PhoenixHologram(Location location) {
+        Preconditions.checkNotNull(location, "Location cannot be null");
+        id = UUID.randomUUID().toString();
 
-    public PhoenixHologram(Location loc, double heightBetweenLines) {
-        Preconditions.checkNotNull(loc, "Location cannot be null");
-        this.location = loc;
-        this.heightBetweenLines = heightBetweenLines;
+        hologram = DHAPI.createHologram(id,location);
     }
-    public PhoenixHologram(Location loc) {
-        Preconditions.checkNotNull(loc, "Location cannot be null");
-        this.location = loc;
-        this.heightBetweenLines=0.25;
-    }
-
 
     public void setLines(List<String> lines) {
         if (lines == null)
@@ -35,8 +25,8 @@ public class PhoenixHologram {
 
         for (int i = 0; i < lines.size(); i++) {
             if (isValidIndex(i)) {
-                if (!this.lines.get(i).getCustomName().equals(lines.get(i)))
-                    this.lines.get(i).setCustomName(lines.get(i));
+                if (!hologram.getPage(0).getLines().get(i).getContent().equals(lines.get(i)))
+                    hologram.getPage(0).setLine(i,lines.get(i));
             } else {
                 addLine(lines.get(i));
 
@@ -45,56 +35,36 @@ public class PhoenixHologram {
         setVisible(true);
     }
     public void addLine(String line){
-        location.add(0, lines.size()*heightBetweenLines, 0);
-        ArmorStand armorStand = (ArmorStand) location.getWorld().spawnEntity(location, EntityType.ARMOR_STAND);
-        armorStand.setCanPickupItems(false);
-        armorStand.setCustomNameVisible(true);
-        armorStand.setCustomName(PhoenixUtils.colorFormat(line));
-        armorStand.setVisible(false);
-        armorStand.setGravity(false);
-        armorStand.setSmall(true);
-
-        lines.add(armorStand);
-
-        location.subtract(0, lines.size()*heightBetweenLines, 0);
+        DHAPI.addHologramLine(hologram,line);
+    }
+    public void changeLine(int line,String value){
+        if(!isValidIndex(line)) return;
+        DHAPI.setHologramLine(hologram,line,value);
     }
     public void teleport(Location loc) {
         if (loc == null)
             return;
 
-        Location teleportTo = loc.clone();
-        for (ArmorStand armorStand : lines) {
-            armorStand.teleport(teleportTo.add(0, this.heightBetweenLines, 0));
-        }
-        location = teleportTo;
+        DHAPI.moveHologram(hologram, loc);
 
     }
     public void clearLines() {
-        for (ArmorStand line : lines) {
-            line.remove();
-        }
+        Location location = hologram.getLocation();
+        hologram.delete();
+        hologram = DHAPI.createHologram(id,location);
 
-        this.lines.clear();
     }
 
-    public void setVisibleLine(int line, boolean visible) {
-        if (isValidIndex(line))
-            this.lines.get(line).setCustomNameVisible(visible);
-    }
     public void setVisible( boolean visible) {
-        for(ArmorStand line: this.lines){
-            line.setCustomNameVisible(visible);
-        }
-    }
-    public boolean isVisible(int line) {
-        return isValidIndex(line) && this.lines.get(line).isCustomNameVisible();
+        if(!visible) hologram.disable();
+        if(!visible) hologram.enable();
     }
 
     private boolean isValidIndex(int index) {
-        return index >= 0 && index < this.lines.size();
+        return index >= 0 && index < hologram.getPage(0).getLines().size();
     }
 
     public Location getLocation(){
-        return location;
+        return hologram.getLocation();
     }
 }
