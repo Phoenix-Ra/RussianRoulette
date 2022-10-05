@@ -23,18 +23,18 @@ public class WorldListener implements Listener {
         }
     }
     @EventHandler
-    public void onBlockBreak(final BlockBreakEvent blockBreakEvent) {
-        Player player = blockBreakEvent.getPlayer();
+    public void onBlockBreak(final BlockBreakEvent event) {
+        Player player = event.getPlayer();
         Game game = RussianRoulette.getInstance().getGameM().getPlayerGame(player);
-        if (game != null) blockBreakEvent.setCancelled(true);
+        if (game != null) event.setCancelled(true);
 
     }
 
 
     @EventHandler
-    public void onBlockPlace(BlockPlaceEvent blockPlaceEvent) {
-        Player player = blockPlaceEvent.getPlayer();
+    public void onBlockPlace(BlockPlaceEvent event) {
+        Player player = event.getPlayer();
         Game game = RussianRoulette.getInstance().getGameM().getPlayerGame(player);
-        if (game != null) blockPlaceEvent.setCancelled(true);
+        if (game != null) event.setCancelled(true);
     }
 }

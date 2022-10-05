@@ -5,8 +5,10 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
+import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 
 import java.lang.annotation.ElementType;
@@ -14,14 +16,14 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
-public abstract class PhoenixCommand implements CommandExecutor {
+public abstract class PhoenixCommand implements CommandExecutor, TabExecutor {
     private final Map<String, Method> subCommands = Maps.newLinkedHashMap();
     protected CommandSender sender;
     protected Player player;
@@ -113,6 +115,20 @@ public abstract class PhoenixCommand implements CommandExecutor {
             replyException(e, "&cUnexpected error occurred while trying to execute the command!");
         }
         return true;
+    }
+    @Override
+    public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
+        List<String> list=new ArrayList<>();
+        if(this.permission != null && !sender.hasPermission(this.permission)) return null;
+
+        if(args.length==1){
+            for(String cmd: subCommands.keySet()){
+                String permission=subCommands.get(cmd).getAnnotation(SubCommand.class).permission();
+                if(!permission.isBlank()&&!sender.hasPermission(permission)) continue;
+                list.add(cmd);
+            }
+        }
+        return list;
     }
 
     @SubCommand(description = "", minArgs = -1, usage = "defaultHelp")

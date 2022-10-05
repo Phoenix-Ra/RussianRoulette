@@ -1,5 +1,6 @@
 package me.phoenixra.russian_roulette;
 
+import lombok.Getter;
 import me.phoenixra.russian_roulette.game.Arena;
 import me.phoenixra.russian_roulette.game.Game;
 import org.bukkit.Bukkit;
@@ -14,8 +15,8 @@ import java.util.Set;
 import java.util.logging.Level;
 
 public class GameManager {
-    private final ArrayList<Arena> arenas = new ArrayList<>();
-    private final Set<Game> games = new HashSet<>();
+    @Getter private final ArrayList<Arena> arenas = new ArrayList<>();
+    @Getter private final Set<Game> games = new HashSet<>();
     private final HashMap<Player, Game> players_in_game = new HashMap<>();
 
     public GameManager(ArrayList<Arena> arenas) {
@@ -132,12 +133,6 @@ public class GameManager {
     }
     public Game getPlayerGame(Player p) {
         return players_in_game.getOrDefault(p, null);
-    }
-    public ArrayList<Arena> getArenas() {
-        return arenas;
-    }
-    public Set<Game> getGames() {
-        return games;
     }
 
 }

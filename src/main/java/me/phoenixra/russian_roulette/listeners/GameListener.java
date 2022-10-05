@@ -31,12 +31,15 @@ public class GameListener implements Listener {
         Player player = event.getPlayer();
         Game game = RussianRoulette.getInstance().getGameM().getPlayerGame(player);
         if (game == null) return;
+        event.setCancelled(true);
 
         try {
-            if (game.getState() == Game.GameState.STARTING) {
+            if (game.getState() == Game.GameState.STARTING||game.getState() == Game.GameState.PENDING_FOR_PLAYERS) {
                 if (player.isOp() && player.getInventory().getHeldItemSlot() == 0) {
-                    if (game.getPlayers().size() < 2)
+                    if (game.getPlayers().size() < 2) {
                         player.sendMessage(PhoenixUtils.colorFormat("&cAt least 2 players required"));
+                        return;
+                    }
                     game.setState(Game.GameState.STARTING);
                     player.getInventory().clear(0);
                 }
@@ -58,12 +61,12 @@ public class GameListener implements Listener {
                             .getItem();
                     player.getInventory().setItem(player.getInventory().getHeldItemSlot(), itemStack);
 
-                    game.getAlgorithm().changeAmountOfBullets(player);
+                    game.getGameAlgorithm().changeAmountOfBullets(player);
 
                     itemStack = new ItemBuilder(Material.FIRE_CHARGE)
                             .setDisplayName(LangClass.item_shoot
-                                    .replace("%chance%",game.getAlgorithm().getCurrentChanceToDie(player)+"")
-                                    .replace("%bullets%",game.getAlgorithm().getBulletsPlaced(player)+""))
+                                    .replace("%chance%",game.getGameAlgorithm().getCurrentChanceToDie(player)+"")
+                                    .replace("%bullets%",game.getGameAlgorithm().getBulletsPlaced(player)+""))
                             .addItemFlag(ItemFlag.HIDE_ATTRIBUTES)
                             .getItem();
                     player.getInventory().setItem(4, itemStack);
@@ -76,12 +79,12 @@ public class GameListener implements Listener {
                             .getItem();
                     player.getInventory().setItem(player.getInventory().getHeldItemSlot(), itemStack);
 
-                    game.getAlgorithm().changeAmountOfBullets(player);
+                    game.getGameAlgorithm().changeAmountOfBullets(player);
 
                     itemStack = new ItemBuilder(Material.FIRE_CHARGE)
                             .setDisplayName(LangClass.item_shoot
-                                    .replace("%chance%",game.getAlgorithm().getCurrentChanceToDie(player)+"")
-                                    .replace("%bullets%",game.getAlgorithm().getBulletsPlaced(player)+""))
+                                    .replace("%chance%",game.getGameAlgorithm().getCurrentChanceToDie(player)+"")
+                                    .replace("%bullets%",game.getGameAlgorithm().getBulletsPlaced(player)+""))
                             .addItemFlag(ItemFlag.HIDE_ATTRIBUTES)
                             .getItem();
 
@@ -92,11 +95,11 @@ public class GameListener implements Listener {
                 }
 
                 if (player.getInventory().getItemInMainHand().getType() == Material.FIRE_CHARGE)
-                    game.getAlgorithm().shootItselfPrepare(player);
+                    game.getGameAlgorithm().shootItselfPrepare(player);
 
 
             } else if (game.getRound() == Game.GameRound.SECOND && player.getInventory().getItemInMainHand().getType() == Material.FIRE_CHARGE) {
-                    game.getAlgorithm().shootItselfPrepare(player);
+                    game.getGameAlgorithm().shootItselfPrepare(player);
 
             } else {
                 if (player.getInventory().getItemInMainHand().getType() != Material.FIRE_CHARGE) {
@@ -107,7 +110,7 @@ public class GameListener implements Listener {
                     if (p == player) {
                         continue;
                     }
-                    ItemStack itemStack = new ItemBuilder()
+                    ItemStack itemStack = new ItemBuilder(Material.PLAYER_HEAD)
                             .setDisplayName(ChatColor.GREEN + p.getName())
                             .setOwner(p.getName())
                             .getItem();
@@ -125,7 +128,7 @@ public class GameListener implements Listener {
     }
 
     @EventHandler
-    public void inGameInventoryClick(InventoryClickEvent e) {
+    public void inventoryClick(InventoryClickEvent e) {
         try {
             Player player = (Player) e.getWhoClicked();
             Game game = RussianRoulette.getInstance().getGameM().getPlayerGame(player);
@@ -151,7 +154,7 @@ public class GameListener implements Listener {
 
                 Player victim = Bukkit.getPlayer(ChatColor.stripColor(e.getClickedInventory().getItem(e.getSlot()).getItemMeta().getDisplayName()));
                 if (game.getPlayers().contains(victim) && victim.isOnline()) {
-                    game.getAlgorithm().shootVictimPrepare(player, victim);
+                    game.getGameAlgorithm().shootVictimPrepare(player, victim);
                     game.setVictim(victim);
                 } else {
                     player.sendMessage("&c&lPlayer left the game");

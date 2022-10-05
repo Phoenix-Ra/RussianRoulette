@@ -80,7 +80,7 @@ public class CommandPlayer extends PhoenixCommand {
             this.reply("&cYou aren't in game");
             return;
         }
-        plugin.getSeatManager().setSitting(player,true);
+        plugin.getSeatManager().setSitting(player,!plugin.getSeatManager().isSitting(player));
 
     }
 

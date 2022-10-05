@@ -54,9 +54,17 @@ public class RussianRoulette extends JavaPlugin {
         new WorldListener();
 
         //Commands
-        getCommand("rr").setExecutor(new CommandPlayer(this));
-        getCommand("rradmin").setExecutor(new CommandAdmin(this));
-        getCommand("rrarena").setExecutor(new CommandArena(this));
+        CommandPlayer commandPlayer=new CommandPlayer(this);
+        getCommand("rr").setExecutor(commandPlayer);
+        getCommand("rr").setTabCompleter(commandPlayer);
+
+        CommandArena commandArena=new CommandArena(this);
+        getCommand("rrarena").setExecutor(commandArena);
+        getCommand("rrarena").setTabCompleter(commandArena);
+
+        CommandAdmin commandAdmin=new CommandAdmin(this);
+        getCommand("rradmin").setExecutor(commandAdmin);
+        getCommand("rradmin").setTabCompleter(commandAdmin);
 
 
     }

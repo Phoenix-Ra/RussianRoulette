@@ -69,10 +69,10 @@ public class PlayerMiscellaneous implements Listener {
 
         if (game.getShooter() == player || game.getVictim() == player) {
             Location to = event.getTo();
-            if (to.getX() >= game.getArena().xMax
-                    || to.getX() <= game.getArena().xMin
-                    || to.getZ() >= game.getArena().zMax
-                    || to.getZ() <= game.getArena().zMin)
+            if (to.getX() >= game.getArena().getXMax()
+                    || to.getX() <= game.getArena().getXMin()
+                    || to.getZ() >= game.getArena().getZMax()
+                    || to.getZ() <= game.getArena().getZMin())
                 event.setTo(event.getFrom());
             return;
         }

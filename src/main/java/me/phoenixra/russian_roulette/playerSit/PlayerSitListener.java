@@ -17,11 +17,6 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 
 public class PlayerSitListener implements Listener {
     @EventHandler
-    public void onPlayerTeleport(PlayerTeleportEvent e) {
-        SeatManager seatManager = RussianRoulette.getInstance().getSeatManager();
-        seatManager.setSitting(e.getPlayer(),false);
-    }
-    @EventHandler
     public void onPlayerDeath(PlayerDeathEvent e) {
         SeatManager seatManager = RussianRoulette.getInstance().getSeatManager();
         seatManager.setSitting(e.getEntity(),false);

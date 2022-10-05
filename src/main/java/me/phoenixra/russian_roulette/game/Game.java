@@ -1,5 +1,7 @@
 package me.phoenixra.russian_roulette.game;
 
+import lombok.Getter;
+import lombok.Setter;
 import me.phoenixra.core.PhoenixUtils;
 import me.phoenixra.russian_roulette.RussianRoulette;
 import me.phoenixra.russian_roulette.files.LangClass;
@@ -18,39 +20,42 @@ import org.bukkit.potion.PotionEffectType;
 import java.util.*;
 
 public class Game {
-    private final Arena arena;
+    @Getter private final Arena arena;
+    @Getter private final GameTask timer;
 
-    private final List<Player> players = new ArrayList<>();
-    private final List<Player> spectators = new ArrayList<>();
+    @Getter private final List<Player> players = new ArrayList<>();
+    @Getter private final List<Player> spectators = new ArrayList<>();
     private final HashMap<CustomLocation, Player> playerSeat = new HashMap<>();
-    private final GameTask timer;
-    private final GameAlgorithm gameAlgorithm;
-    private final BidAlgorithm bidAlgorithm;
-    private final ScoreboardBuilder scoreboardBuilder;
-    private final GameHologram gameHologram;
-    private final int maxLives = 2;
+
+    @Getter private final GameAlgorithm gameAlgorithm;
+    @Getter private final BidAlgorithm bidAlgorithm;
+    @Getter private final GameHologram gameHologram;
+
+    private final int MAX_LIVES = 2;
     public HashMap<Player, Integer> playerLives = new HashMap<>();
-    protected RoundCache roundCache;
+    @Getter protected RoundCache roundCache;
+
+    @Getter @Setter private GameState state;
+    @Getter @Setter private GameRound round;
+    @Getter private RoundState roundstate;
+
+    @Getter @Setter private boolean shooting;
     private CustomLocation shooterSeat;
     private CustomLocation victimSeat;
-    private GameState state;
-    private GameRound round;
-    private RoundState roundstate;
-    private boolean isShooting;
+
 
     public Game(Arena arena) {
         this.arena = arena;
 
         gameAlgorithm = new GameAlgorithm(this);
         bidAlgorithm = new BidAlgorithm(this);
-        scoreboardBuilder = new ScoreboardBuilder();
 
         state = GameState.PENDING_FOR_PLAYERS;
         round = GameRound.FIRST;
         roundstate = RoundState.NEXT_SHOOTER_DELAY;
 
         timer = new GameTask(Game.this);
-        gameHologram = new GameHologram(this.getArena().getCenter().getLocation().add(0, 5, 0));
+        gameHologram = new GameHologram(this.getArena().getCenter().getLocation());
         gameHologram.setGameHolo(this);
 
     }
@@ -68,23 +73,15 @@ public class Game {
         teleportPlayerToCenter(playerSeat.get(shooterSeat));
         setupShooterInventory(playerSeat.get(shooterSeat));
 
-        setRoundState(RoundState.NEXT_SHOOTER_DELAY, true);
+        setRoundState(RoundState.SHOOTER_DECIDING, true);
     }
 
     public void enableGame() {
-        gameHologram.clearLines();
         state = GameState.PENDING_FOR_PLAYERS;
     }
 
     public void disableGame() {
-        if (state != GameState.PENDING_FOR_PLAYERS) {
-            this.forceEnd();
-        } else {
-            for (Player p : this.players) {
-                this.playerLeave(p);
-            }
-        }
-        gameHologram.clearLines();
+        this.clearCache();
         state = GameState.DISABLED;
     }
 
@@ -92,31 +89,22 @@ public class Game {
         clearCache();
     }
 
-    public void forceEnd() {
-        for (Player player : this.players) {
-            if (player == null) continue;
-            this.playerLeave(player);
-        }
-        this.clearCache();
-        this.state = GameState.PENDING_FOR_PLAYERS;
-    }
 
-
-    public boolean playerJoin(Player p) {
+    public void playerJoin(Player p) {
         if (state != GameState.PENDING_FOR_PLAYERS && state != GameState.STARTING) {
             addSpectator(p);
-            return true;
+            return;
         }
         if (players.size() >= arena.getMaxPlayers()) {
             addSpectator(p);
-            return true;
+            return;
         }
 
         players.add(p);
         CustomLocation seat = findFreeSeat();
         if (seat == null) {
             addSpectator(p);
-            return true;
+            return;
         }
         playerSeat.put(seat, p);
         p.teleport(getPlayerSeatLocation(p).getLocation());
@@ -125,7 +113,7 @@ public class Game {
         ScoreboardBuilder.applyScoreboard(p, ScoreboardBuilder.ScoreboardType.STARTING);
 
         gameAlgorithm.addPlayer(p);
-        playerLives.put(p, maxLives);
+        playerLives.put(p, MAX_LIVES);
         RussianRoulette.getInstance().getGameM().addPlayerToGame(this, p);
 
         p.setGameMode(GameMode.SURVIVAL);
@@ -158,24 +146,22 @@ public class Game {
         if (players.size() >= arena.getMinPlayers() && getState() == GameState.PENDING_FOR_PLAYERS) {
             setState(GameState.STARTING);
         }
-        return true;
     }
 
-    public boolean playerLeave(Player p) {
+    public void playerLeave(Player p) {
         if (state == GameState.STARTING || state == GameState.PENDING_FOR_PLAYERS) {
-            clearPlayerCache(p);
+            clearPlayerCache(p,true);
             if (players.size() < 2) {
-                this.getTimer().reset();
+                setState(GameState.PENDING_FOR_PLAYERS);
             }
             broadcastMessage(LangClass.messages_playerLeft.replace("%player%", p.getName()));
 
-            return true;
         } else {
 
             if (state == GameState.ACTIVE) {
-                clearPlayerCache(p);
+                clearPlayerCache(p,true);
                 if (!spectators.contains(p)) {
-                    if (this.isShooting) {
+                    if (isShooting()) {
                         if (this.getShooter() == p) {
                             broadcastMessage(LangClass.messages_playerEscaped.replace("%player%", p.getName()));
                             this.nextShooter();
@@ -184,25 +170,22 @@ public class Game {
                             broadcastMessage(LangClass.messages_playerEscaped.replace("%player%", p.getName()));
                             this.nextShooter();
                         }
-                        return true;
+                        return;
                     }
                     broadcastMessage(LangClass.messages_playerLeft.replace("%player%", p.getName()));
                 }
 
-                return true;
+                return;
             }
 
             if (state == GameState.FINISHING) {
-                clearPlayerCache(p);
+                clearPlayerCache(p,true);
                 if (!this.getSpectators().contains(p)) {
                     broadcastMessage(LangClass.messages_playerLeft.replace("%player%", p.getName()));
                 }
 
-                return true;
             }
         }
-
-        return false;
     }
 
     private void addSpectator(Player p) {
@@ -232,7 +215,7 @@ public class Game {
 
 
     public void nextRound() {
-        isShooting = false;
+        setShooting(false);
         if (players.size() <= 1 || state == GameState.FINISHING) {
             return;
         }
@@ -245,10 +228,10 @@ public class Game {
         setupShooterInventory(shooter);
         if (round == GameRound.FINAL) {
             Random r = new Random();
-            this.getAlgorithm().setBulletsPlaced(shooter, r.nextInt(5) + 1);
+            getGameAlgorithm().setBulletsPlaced(shooter, r.nextInt(5) + 1);
             broadcastMessage(LangClass.messages_shooterBullets
                     .replace("%shooter%", shooter.getName())
-                    .replace("%bullets%", getAlgorithm().getBulletsPlaced(shooter) + ""));
+                    .replace("%bullets%", getGameAlgorithm().getBulletsPlaced(shooter) + ""));
         }
         shooter.sendTitle(LangClass.titles_yourTurn, "");
 
@@ -259,7 +242,7 @@ public class Game {
         if (players.size() <= 1 || this.state == GameState.FINISHING) {
             return;
         }
-        isShooting = false;
+        setShooting(false);
         if (getRoundCache() != null) {
             if (!spectators.contains(getRoundCache().getShooter())) {
                 teleportPlayerBack(getShooter());
@@ -271,7 +254,7 @@ public class Game {
 
         if (getArena().getSeatPoints().indexOf(shooterSeat) >= getArena().getSeatPoints().size()) {
             if (this.round != GameRound.FINAL) {
-                this.getTimer().activateNextRoundDelay();
+                this.getTimer().setTimer(GameTask.Timer.NEXT_ROUND_DELAY);
                 return;
             }
             shooterSeat = victimSeat = findNextShooterSeat(true);
@@ -280,7 +263,7 @@ public class Game {
             shooterSeat = victimSeat = findNextShooterSeat(false);
             if (shooterSeat == null) {
                 if (this.round != GameRound.FINAL) {
-                    this.getTimer().activateNextRoundDelay();
+                    this.getTimer().setTimer(GameTask.Timer.NEXT_ROUND_DELAY);
                     return;
                 }
                 shooterSeat = victimSeat = findNextShooterSeat(true);
@@ -291,19 +274,18 @@ public class Game {
         Player shooter = playerSeat.get(shooterSeat);
         this.teleportPlayerToCenter(shooter);
         this.setupShooterInventory(shooter);
-        playerShotEffect(shooter);
         if (round == GameRound.FINAL) {
             Random r = new Random();
-            this.getAlgorithm().setBulletsPlaced(shooter, r.nextInt(5) + 1);
+            getGameAlgorithm().setBulletsPlaced(shooter, r.nextInt(5) + 1);
             broadcastMessage(LangClass.messages_shooterBullets
                     .replace("%shooter%", shooter.getName())
-                    .replace("%bullets%", getAlgorithm().getBulletsPlaced(shooter) + ""));
+                    .replace("%bullets%", getGameAlgorithm().getBulletsPlaced(shooter) + ""));
         } else if (round == GameRound.FIRST) {
             gameAlgorithm.setBulletsPlaced(shooter, 0);
         }
         shooter.sendTitle(LangClass.titles_yourTurn, "");
 
-        setRoundState(RoundState.NEXT_SHOOTER_DELAY, true);
+        setRoundState(RoundState.SHOOTER_DECIDING, true);
     }
 
     public void victimDamaged() {
@@ -343,12 +325,12 @@ public class Game {
                 broadcastMessage(LangClass.messages_player_damaged_other.get(n).replace("%shooter%", shooter.getName()).replace("%victim%", victim.getName()));
             } else {
                 if (this.round == GameRound.FIRST) {
-                    this.getAlgorithm().setBulletsPlaced(shooter, 6 - (getAlgorithm().getBulletsPlaced(shooter) + 1));
+                    getGameAlgorithm().setBulletsPlaced(shooter, 6 - (getGameAlgorithm().getBulletsPlaced(shooter) + 1));
                 }
             }
-            victim.setHealth(((double) maxLives / playerLives.get(victim)) * 20);
+            victim.setHealth(((double) MAX_LIVES / playerLives.get(victim)) * 20);
         }
-        this.getTimer().activateNextShooterDelay();
+        this.getTimer().setTimer(GameTask.Timer.NEXT_SHOOTER_DELAY);
     }
 
     public void victimSurvived() {
@@ -363,7 +345,7 @@ public class Game {
         survivedEffect(victim);
 
 
-        if (this.getAlgorithm().getBulletsPlaced(shooter) == 0 && round == GameRound.FIRST) {
+        if (getGameAlgorithm().getBulletsPlaced(shooter) == 0 && round == GameRound.FIRST) {
             broadcastMessage(LangClass.messages_ShootWithoutBullets
                     .replace("%shooter%", shooter.getName())
                     .replace("%victim%", victim.getName()));
@@ -373,12 +355,12 @@ public class Game {
                     .replace("%victim%", victim.getName()));
 
         if (this.round == GameRound.FIRST) {
-            int bullets = getAlgorithm().getBulletsPlaced(shooter);
-            getAlgorithm().setBulletsPlaced(shooter, bullets == 6 ?
+            int bullets = getGameAlgorithm().getBulletsPlaced(shooter);
+            getGameAlgorithm().setBulletsPlaced(shooter, bullets == 6 ?
                     1 : bullets == 0 ?
-                    6 : 6 - (getAlgorithm().getBulletsPlaced(shooter) + 1));
+                    6 : 6 - (getGameAlgorithm().getBulletsPlaced(shooter) + 1));
         }
-        this.getTimer().activateNextShooterDelay();
+        this.getTimer().setTimer(GameTask.Timer.NEXT_SHOOTER_DELAY);
     }
 
 
@@ -399,24 +381,24 @@ public class Game {
 
             shooter.getInventory().setItem(4, new ItemBuilder(Material.FIRE_CHARGE)
                     .setDisplayName(LangClass.item_shoot
-                            .replace("%chance%", getAlgorithm().getCurrentChanceToDie(shooter) + "")
-                            .replace("%bullets%", getAlgorithm().getBulletsPlaced(shooter) + ""))
+                            .replace("%chance%", getGameAlgorithm().getCurrentChanceToDie(shooter) + "")
+                            .replace("%bullets%", getGameAlgorithm().getBulletsPlaced(shooter) + ""))
                     .addItemFlag(ItemFlag.HIDE_ATTRIBUTES)
                     .getItem());
 
         } else if (round == GameRound.SECOND) {
             shooter.getInventory().setItem(4, new ItemBuilder(Material.FIRE_CHARGE)
                     .setDisplayName(LangClass.item_shoot
-                            .replace("%chance%", getAlgorithm().getCurrentChanceToDie(shooter) + "")
-                            .replace("%bullets%", getAlgorithm().getBulletsPlaced(shooter) + ""))
+                            .replace("%chance%", getGameAlgorithm().getCurrentChanceToDie(shooter) + "")
+                            .replace("%bullets%", getGameAlgorithm().getBulletsPlaced(shooter) + ""))
                     .addItemFlag(ItemFlag.HIDE_ATTRIBUTES)
                     .getItem());
 
         } else {
             shooter.getInventory().setItem(4, new ItemBuilder(Material.FIRE_CHARGE)
                     .setDisplayName(LangClass.item_shoot_victim
-                            .replace("%chance%", getAlgorithm().getCurrentChanceToDie(shooter) + "")
-                            .replace("%bullets%", getAlgorithm().getBulletsPlaced(shooter) + ""))
+                            .replace("%chance%", getGameAlgorithm().getCurrentChanceToDie(shooter) + "")
+                            .replace("%bullets%", getGameAlgorithm().getBulletsPlaced(shooter) + ""))
                     .addItemFlag(ItemFlag.HIDE_ATTRIBUTES)
                     .getItem());
         }
@@ -427,9 +409,7 @@ public class Game {
         if (fromBeginning) {
             for (CustomLocation seat : getArena().getSeatPoints()) {
                 if (playerSeat.get(seat) != null) {
-                    shooterSeat = seat;
-                    victimSeat = seat;
-                    break;
+                    return seat;
                 }
             }
         } else {
@@ -446,37 +426,28 @@ public class Game {
 
     private CustomLocation findFreeSeat() {
         for (CustomLocation loc : getArena().getSeatPoints()) {
-            if (playerSeat.containsKey(loc)) {
-                continue;
-            }
+            if (playerSeat.containsKey(loc)) continue;
+
             return loc;
         }
         return null;
     }
 
     public void teleportPlayerToCenter(Player p) {
-        Location loc = this.arena.getCenter().getLocation();
-        if (loc.getBlock().getType() == Material.AIR) {
-            p.teleport(this.arena.getCenter().getLocation());
-        } else {
-            loc = loc.add(0, 1, 0);
-            if (loc.getBlock().getType() != Material.AIR) {
-                loc = loc.add(0, 1, 0);
-            }
-            p.teleport(loc);
-        }
+        RussianRoulette.getInstance().getSeatManager().setSitting(p,false);
         NameTagVisibility.setVisibility(p, false);
+        p.teleport(arena.getCenter().getLocation());
     }
 
     public void teleportPlayerBack(Player p) {
         for (Map.Entry<CustomLocation, Player> entry : playerSeat.entrySet()) {
             if (entry.getValue() == p) {
                 p.teleport(playerSeat.get(entry.getKey()).getLocation());
-                break;
+                p.getInventory().clear();
+                RussianRoulette.getInstance().getSeatManager().setSitting(p,true);
+                NameTagVisibility.setVisibility(p, true);
             }
         }
-        p.getInventory().clear();
-        NameTagVisibility.setVisibility(p, true);
     }
 
     public void broadcastMessage(String message) {
@@ -534,21 +505,21 @@ public class Game {
     }
 
     private void clearCache() {
-        players.forEach(this::clearPlayerCache);
-        spectators.forEach(this::clearPlayerCache);
+        players.forEach(player -> clearPlayerCache(player,false));
+        spectators.forEach(player -> clearPlayerCache(player,false));
         players.clear();
         spectators.clear();
         playerSeat.clear();
         shooterSeat = null;
         victimSeat = null;
-        state = GameState.PENDING_FOR_PLAYERS;
-        round = GameRound.FIRST;
-        timer.reset();
         playerLives.clear();
         gameAlgorithm.clearAll();
-        isShooting = false;
-        setRoundState(RoundState.NEXT_SHOOTER_DELAY, false);
+        gameHologram.clearCache();
+        shooting = false;
         roundCache = null;
+        setState(GameState.PENDING_FOR_PLAYERS);
+        setRound(GameRound.FIRST);
+        setRoundState(RoundState.NEXT_SHOOTER_DELAY, false);
     }
 
     private void clearPlayerCache(Player p, boolean removeFromList) {
@@ -571,10 +542,10 @@ public class Game {
             p.removePotionEffect(potionEffect.getType());
         }
         RussianRoulette.getInstance().getSeatManager().setSitting(p, false);
-        if(RussianRoulette.getInstance().getConfigFile().getLobby()==null) {
-            Bukkit.getConsoleSender().sendMessage("RussianRoulette: lobby isn't set");
 
-        }else p.teleport(RussianRoulette.getInstance().getConfigFile().getLobby());
+        if(RussianRoulette.getInstance().getConfigFile().getLobby()!=null)
+            p.teleport(RussianRoulette.getInstance().getConfigFile().getLobby());
+
 
         showAll(p);
         Utils.separatePlayer(p);
@@ -585,16 +556,12 @@ public class Game {
         this.roundstate = value;
         if (changeTimer) {
             switch (value) {
-                case SHOOTER_DECIDING -> getTimer().activateShooterDecidingDelay();
-                case NEXT_SHOOTER_DELAY -> getTimer().activateNextShooterDelay();
-                case BET_TIME -> getTimer().activateBidTime();
-                case NEXT_ROUND_DELAY -> getTimer().activateNextRoundDelay();
+                case SHOOTER_DECIDING -> getTimer().setTimer(GameTask.Timer.SHOOTER_DECIDING);
+                case NEXT_SHOOTER_DELAY -> getTimer().setTimer(GameTask.Timer.NEXT_SHOOTER_DELAY);
+                case BET_TIME -> getTimer().setTimer(GameTask.Timer.BID_TIME);
+                case NEXT_ROUND_DELAY -> getTimer().setTimer(GameTask.Timer.NEXT_ROUND_DELAY);
             }
         }
-    }
-
-    public void setIsShooting(boolean b) {
-        this.isShooting = b;
     }
 
     public CustomLocation getPlayerSeatLocation(Player p) {
@@ -606,25 +573,6 @@ public class Game {
         return null;
     }
 
-    public Arena getArena() {
-        return arena;
-    }
-
-    public RoundState getRoundState() {
-        return roundstate;
-    }
-
-    public GameHologram getGameHologram() {
-        return gameHologram;
-    }
-
-    public boolean isShooting() {
-        return isShooting;
-    }
-
-    public Player getVictim() {
-        return playerSeat.get(victimSeat);
-    }
 
     public void setVictim(Player p) {
         playerSeat.forEach((key, value) -> {
@@ -633,50 +581,13 @@ public class Game {
             }
         });
     }
-
-    public GameAlgorithm getAlgorithm() {
-        return gameAlgorithm;
+    public Player getVictim() {
+        return playerSeat.get(victimSeat);
     }
-
-    public BidAlgorithm getBidAlgorithm() {
-        return bidAlgorithm;
-    }
-
-    public GameRound getRound() {
-        return this.round;
-    }
-
-    public void setRound(GameRound r) {
-        this.round = r;
-    }
-
-    public GameState getState() {
-        return state;
-    }
-
-    public void setState(GameState s) {
-        this.state = s;
-    }
-
-    public List<Player> getSpectators() {
-        return spectators;
-    }
-
-    public List<Player> getPlayers() {
-        return players;
-    }
-
-    public GameTask getTimer() {
-        return timer;
-    }
-
     public Player getShooter() {
         return playerSeat.get(shooterSeat);
     }
 
-    public RoundCache getRoundCache() {
-        return roundCache;
-    }
 
     public enum GameState {
         DISABLED(LangClass.other_round_Disabled),

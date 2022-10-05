@@ -4,7 +4,11 @@ import com.google.common.collect.Maps;
 import me.phoenixra.core.PhoenixCommand;
 import me.phoenixra.russian_roulette.RussianRoulette;
 import me.phoenixra.russian_roulette.files.LangClass;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
+
 import java.lang.reflect.Method;
+import java.util.List;
 import java.util.Map;
 
 public class CommandAdmin extends PhoenixCommand {
@@ -21,10 +25,6 @@ public class CommandAdmin extends PhoenixCommand {
         this.setMsg_notEnoughArgs(LangClass.general_not_enough_args);
     }
 
-    @SubCommand(description = "", minArgs = -1, usage = "/rradmin help")
-    public void help() {
-        reply("&a/rradmin reload ");
-    }
 
     @SubCommand(description = "", minArgs = -1, usage = "/rradmin reload")
     public void reload() {
@@ -38,4 +38,5 @@ public class CommandAdmin extends PhoenixCommand {
         plugin.loadArenas();
 
     }
+
 }

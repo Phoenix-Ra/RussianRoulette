@@ -33,7 +33,7 @@ public class EditorListener implements Listener {
         try {
             Player player = (Player) event.getWhoClicked();
             ItemStack itemStack = event.getCurrentItem();
-            ArenaEditor editor = plugin.getEditM().getPlayerEdit(player);
+            ArenaEditor editor = plugin.getEditorM().getPlayerEdit(player);
             if ( editor == null) return;
 
             String itemName = itemStack==null ? null : !itemStack.hasItemMeta() ? null : itemStack.getItemMeta().getDisplayName();
@@ -50,7 +50,7 @@ public class EditorListener implements Listener {
                 if (itemName.equalsIgnoreCase(PhoenixUtils.colorFormat("&aSpectator's spawn point"))) {
                     editor.setSpectatorSpawn(new CustomLocation(player.getLocation()));
                     player.closeInventory();
-                    plugin.getEditM().showEditorHolograms(player);
+                    plugin.getEditorM().showEditorHolograms(player);
                     player.sendMessage(PhoenixUtils.colorFormat("&7Spectator's spawn successfully changed"));
                 }
                 else if (itemName.equals(PhoenixUtils.colorFormat("&aMax players"))) {
@@ -59,7 +59,7 @@ public class EditorListener implements Listener {
                     if (event.getClick().isLeftClick())
                         editor.setMaxPlayers(editor.getMaxPlayers() != 0 ? editor.getMaxPlayers() - 1 : 0);
 
-                    this.plugin.getEditM().openSettings(player);
+                    this.plugin.getEditorM().openSettings(player);
                 }
                 else if (itemName.equalsIgnoreCase(PhoenixUtils.colorFormat("&aMin players"))) {
                     if (event.getClick().isRightClick())
@@ -67,14 +67,14 @@ public class EditorListener implements Listener {
                     if (event.getClick().isLeftClick())
                         editor.setMinPlayers(editor.getMinPlayers() != 0 ? editor.getMinPlayers() - 1 : 0);
 
-                    plugin.getEditM().openSettings(player);
+                    plugin.getEditorM().openSettings(player);
                 }
                 else if (itemName.equalsIgnoreCase(PhoenixUtils.colorFormat("&aSeat points"))) {
                     if (event.getClick().isRightClick() && editor.getSeatPoints().size() > 0) {
                         editor.getSeatPoints().remove(editor.getSeatPoints().get(editor.getSeatPoints().size() - 1));
                         player.closeInventory();
                         player.sendMessage(PhoenixUtils.colorFormat("&aLast seat point successfully removed"));
-                        plugin.getEditM().showEditorHolograms(player);
+                        plugin.getEditorM().showEditorHolograms(player);
                     }
                     if (editor.getMaxPlayers() <= editor.getSeatPoints().size()) {
                         player.sendMessage(PhoenixUtils.colorFormat("&cAmount of seats cannot be more than max amount of players"));
@@ -84,7 +84,7 @@ public class EditorListener implements Listener {
                         editor.getSeatPoints().add(new CustomLocation(player.getLocation()));
                         player.closeInventory();
                         player.sendMessage(PhoenixUtils.colorFormat("&aSeat point successfully added"));
-                        plugin.getEditM().showEditorHolograms(player);
+                        plugin.getEditorM().showEditorHolograms(player);
                     }
                 }
                 else if (itemName.equalsIgnoreCase(PhoenixUtils.colorFormat("&aFinish editing"))) {
@@ -102,14 +102,14 @@ public class EditorListener implements Listener {
                 if(itemStack==null) return;
                 if (itemStack.getType()==Material.LIME_TERRACOTTA) {
                     if (event.getView().getTitle().equals(PhoenixUtils.colorFormat("&aFinish editing"))) {
-                        plugin.getEditM().finish(player);
+                        plugin.getEditorM().finish(player);
                     }
                     else if (event.getView().getTitle().equals(PhoenixUtils.colorFormat("&cCancel editing"))) {
-                        plugin.getEditM().cancel(player);
+                        plugin.getEditorM().cancel(player);
                     }
                 }
                 if (itemStack.getType()==Material.RED_TERRACOTTA) {
-                    plugin.getEditM().openSettings(player);
+                    plugin.getEditorM().openSettings(player);
                 }
             }
         } catch (Exception e) {
@@ -121,12 +121,12 @@ public class EditorListener implements Listener {
     public void interact(PlayerInteractEvent event) {
         final Player player = event.getPlayer();
         if(!player.getInventory().getItemInMainHand().hasItemMeta()) return;
-        if (RussianRoulette.getInstance().getEditM().getPlayerEdit(player) == null) return;
+        if (RussianRoulette.getInstance().getEditorM().getPlayerEdit(player) == null) return;
 
         if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
             if (player.getInventory().getItemInMainHand().getItemMeta().
                     getDisplayName().equalsIgnoreCase(PhoenixUtils.colorFormat("&9Arena settings &7(click)"))) {
-                RussianRoulette.getInstance().getEditM().openSettings(player);
+                RussianRoulette.getInstance().getEditorM().openSettings(player);
                 event.setCancelled(true);
             }
             if (player.getInventory().getItemInMainHand().getItemMeta().
@@ -140,13 +140,13 @@ public class EditorListener implements Listener {
             event.setCancelled(true);
 
             if (event.getAction() == Action.LEFT_CLICK_BLOCK || event.getAction() == Action.LEFT_CLICK_AIR) {
-                RussianRoulette.getInstance().getEditM().getPlayerEdit(player).setCenterEdge1(new CustomLocation(event.getClickedBlock().getLocation()));
+                RussianRoulette.getInstance().getEditorM().getPlayerEdit(player).setCenterEdge1(new CustomLocation(event.getClickedBlock().getLocation()));
                 player.sendMessage("§aEdge point 1 successfully changed");
-                RussianRoulette.getInstance().getEditM().showEditorHolograms(player);
+                RussianRoulette.getInstance().getEditorM().showEditorHolograms(player);
             } else if (event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getAction() == Action.RIGHT_CLICK_AIR) {
-                RussianRoulette.getInstance().getEditM().getPlayerEdit(player).setCenterEdge2(new CustomLocation(event.getClickedBlock().getLocation()));
+                RussianRoulette.getInstance().getEditorM().getPlayerEdit(player).setCenterEdge2(new CustomLocation(event.getClickedBlock().getLocation()));
                 player.sendMessage("§aEdge point 2 successfully changed");
-                RussianRoulette.getInstance().getEditM().showEditorHolograms(player);
+                RussianRoulette.getInstance().getEditorM().showEditorHolograms(player);
             }
         }
 

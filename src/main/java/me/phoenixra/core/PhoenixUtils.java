@@ -2,9 +2,6 @@ package me.phoenixra.core;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
-import org.bukkit.entity.Player;
-
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -70,58 +67,24 @@ public class PhoenixUtils {
     }
 
     public static Color parseColor(String s){
-        Color color;
-        switch (s.toLowerCase()){
-            case "aqua":
-                color=Color.AQUA;
-                break;
-            case "red":
-                color=Color.RED;
-                break;
-            case "green":
-                color=Color.GREEN;
-                break;
-            case "blue":
-                color=Color.BLUE;
-                break;
-            case "fuchsia":
-                color=Color.FUCHSIA;
-                break;
-            case "gray":
-                color=Color.GRAY;
-                break;
-            case "lime":
-                color=Color.LIME;
-                break;
-            case "maroon":
-                color=Color.MAROON;
-                break;
-            case "navy":
-                color=Color.NAVY;
-                break;
-            case "olive":
-                color=Color.OLIVE;
-                break;
-            case "orange":
-                color=Color.ORANGE;
-                break;
-            case "purple":
-                color=Color.PURPLE;
-                break;
-            case "silver":
-                color=Color.SILVER;
-                break;
-            case "teal":
-                color=Color.TEAL;
-                break;
-            case "yellow":
-                color=Color.YELLOW;
-                break;
-            default:
-                color=Color.WHITE;
-                break;
-
-        }
+        Color color = switch (s.toLowerCase()) {
+            case "aqua" -> Color.AQUA;
+            case "red" -> Color.RED;
+            case "green" -> Color.GREEN;
+            case "blue" -> Color.BLUE;
+            case "fuchsia" -> Color.FUCHSIA;
+            case "gray" -> Color.GRAY;
+            case "lime" -> Color.LIME;
+            case "maroon" -> Color.MAROON;
+            case "navy" -> Color.NAVY;
+            case "olive" -> Color.OLIVE;
+            case "orange" -> Color.ORANGE;
+            case "purple" -> Color.PURPLE;
+            case "silver" -> Color.SILVER;
+            case "teal" -> Color.TEAL;
+            case "yellow" -> Color.YELLOW;
+            default -> Color.WHITE;
+        };
         return color;
     }
     public static Class<?> getNMSClass( String pack, String name) {

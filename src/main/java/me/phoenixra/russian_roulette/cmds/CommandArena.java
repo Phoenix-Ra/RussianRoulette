@@ -34,7 +34,7 @@ public class CommandArena extends PhoenixCommand {
                 return;
             }
         }
-        if(!RussianRoulette.getInstance().getEditM().isPlayerAllowedToEdit(player)) {
+        if(!RussianRoulette.getInstance().getEditorM().isPlayerAllowedToEdit(player)) {
             this.reply("&cThis arena is already being edited");
             return;
         }
@@ -42,7 +42,7 @@ public class CommandArena extends PhoenixCommand {
             this.reply("&cThe name is too long or too small");
             return;
         }
-        plugin.getEditM().startEditNewArena(player, name, player.getWorld().getName());
+        plugin.getEditorM().startEditNewArena(player, name, player.getWorld().getName());
 
 
     }
@@ -62,16 +62,16 @@ public class CommandArena extends PhoenixCommand {
             return;
         }
 
-        if(!RussianRoulette.getInstance().getEditM().isPlayerAllowedToEdit(this.player)) {
+        if(!RussianRoulette.getInstance().getEditorM().isPlayerAllowedToEdit(this.player)) {
             this.reply("&cThis arena is already being edited");
             return;
         }
-        plugin.getEditM().startEditArena(player, name);
+        plugin.getEditorM().startEditArena(player, name);
 
     }
     @SubCommand(description = "gives items to edit the arena. Use it if you lost them", minArgs = -1, usage = "/rrarena getitems", sortOrder = 3)
     public void getItems() {
-        if(!plugin.getEditM().giveEditItems(player)) {
+        if(!plugin.getEditorM().giveEditItems(player)) {
             this.reply("&cCurrently you aren't editing any arena");
             return;
         }
@@ -96,7 +96,7 @@ public class CommandArena extends PhoenixCommand {
             this.reply("&cArena with that name doesn't exists");
             return;
         }
-        if(!RussianRoulette.getInstance().getEditM().isPlayerAllowedToEdit(this.player)) {
+        if(!RussianRoulette.getInstance().getEditorM().isPlayerAllowedToEdit(this.player)) {
             this.reply("&cThis arena is already being edited");
             return;
         }

@@ -8,10 +8,6 @@ import java.lang.annotation.Target;
 public class PhoenixFileClass {
 
 
-    public Object getReference(int number) {
-        return null;
-    }
-
 
 
     @Target({ ElementType.FIELD })

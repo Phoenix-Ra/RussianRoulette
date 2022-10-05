@@ -4,6 +4,7 @@ import me.phoenixra.russian_roulette.RussianRoulette;
 import me.phoenixra.russian_roulette.files.ConfigClass;
 import me.phoenixra.russian_roulette.files.LangClass;
 import me.phoenixra.russian_roulette.utils.GameSounds;
+import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -19,22 +20,20 @@ public class GameTask extends BukkitRunnable {
         this.runTaskTimer(RussianRoulette.getInstance(), 0L, 20L);
     }
 
-    public void reset() {
-        timer = Timer.DEFAULT;
-    }
 
     @Override
     public void run() {
+        Bukkit.getConsoleSender().sendMessage(getState()+":"+timer.timeLeft());
         switch (getState()) {
             case 2 -> {
+                if(timer != Timer.STARTING_GAME) setTimer(Timer.STARTING_GAME);
                 if (timer.timeLeft() > 0) {
                     timer.update();
                 } else {
                     game.broadcastSound(GameSounds.gameStart(), true);
-                    timer = Timer.DEFAULT;
                     game.startGame();
                 }
-                if (timer.timeLeft() == 30 || timer.timeLeft() == 15 || timer.timeLeft() < 6) {
+                if (timer.timeLeft() == 30 || timer.timeLeft() == 15 || (timer.timeLeft() < 6 && timer.timeLeft() > 0)) {
                     game.broadcastMessage(LangClass.messages_startTimer.replace("%timer%", timer.timeLeft() + ""));
                     game.broadcastSound(GameSounds.timeTick(), true);
                 }
@@ -42,13 +41,13 @@ public class GameTask extends BukkitRunnable {
             case 3 -> {
                 if (game.getPlayers().size() < 2) {
                     game.setState(Game.GameState.FINISHING);
-                    timer = Timer.FINISH_DELAY;
+                    setTimer(Timer.FINISH_DELAY);
                 }
                 if (timer == Timer.NEXT_SHOOTER_DELAY) {
                     if (timer.timeLeft() > 0) {
                         timer.update();
                     } else {
-                        timer = Timer.DEFAULT;
+                        setTimer(Timer.SHOOTER_DECIDING);
                         game.nextShooter();
                     }
                 } else if (timer == Timer.NEXT_ROUND_DELAY) {
@@ -63,7 +62,7 @@ public class GameTask extends BukkitRunnable {
                             }
                         }
                     } else {
-                        timer = Timer.DEFAULT;
+                        setTimer(Timer.SHOOTER_DECIDING);
                         game.nextRound();
                     }
                 } else if (timer == Timer.SHOOTER_DECIDING) {
@@ -74,10 +73,10 @@ public class GameTask extends BukkitRunnable {
                     }
                     timer.update();
                     if (timer.timeLeft() <= 0) {
-                        timer = Timer.DEFAULT;
+                        setTimer(Timer.BID_TIME);
                         game.broadcastMessage(LangClass.messages_shooterDecideTooLong.replace("%shooter%", game.getShooter().getName()));
                         game.getShooter().closeInventory();
-                        game.getAlgorithm().shootItselfPrepare(game.getShooter());
+                        game.getGameAlgorithm().shootItselfPrepare(game.getShooter());
 
                         break;
                     }
@@ -90,14 +89,14 @@ public class GameTask extends BukkitRunnable {
                         game.nextShooter();
                     }
                     if (timer.timeLeft() <= 0) {
-                        timer = Timer.DEFAULT;
-                        game.getAlgorithm().endBid();
+                        setTimer(Timer.NEXT_SHOOTER_DELAY);
+                        game.getGameAlgorithm().endBid();
 
                     }
                 }
             }
             case 4 -> {
-                if (timer != Timer.FINISH_DELAY) timer = Timer.FINISH_DELAY;
+                if (timer != Timer.FINISH_DELAY) setTimer(Timer.FINISH_DELAY);
                 if (timer.timeLeft() > 0 && game.getPlayers().size() > 0) {
                     timer.update();
                 } else {
@@ -174,20 +173,9 @@ public class GameTask extends BukkitRunnable {
         return 0;
     }
 
-    public void activateNextRoundDelay() {
-        timer = Timer.NEXT_ROUND_DELAY;
-    }
-
-    public void activateNextShooterDelay() {
-        timer = Timer.NEXT_SHOOTER_DELAY;
-    }
-
-    public void activateShooterDecidingDelay() {
-        timer = Timer.NEXT_SHOOTER_DELAY;
-    }
-
-    public void activateBidTime() {
-        timer = Timer.BID_TIME;
+    public void setTimer(Timer timer){
+        this.timer=timer;
+        this.timer.resetTimer();
     }
 
     public Timer getCurrentTimer() {
@@ -205,14 +193,19 @@ public class GameTask extends BukkitRunnable {
         NEXT_ROUND_DELAY(ConfigClass.nextRound_delay),
         FINISH_DELAY(ConfigClass.finish_delay);
 
+        private final int DURATION;
         private int timer;
 
         Timer(int duration) {
+            DURATION=duration;
             timer = duration;
         }
 
         private void update() {
             timer--;
+        }
+        private void resetTimer() {
+            timer=DURATION;
         }
 
         protected int timeLeft() {

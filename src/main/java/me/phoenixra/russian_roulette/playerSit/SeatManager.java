@@ -36,10 +36,10 @@ public class SeatManager {
             getSeats().put(player.getUniqueId(), seat);
         } else if (!value && this.isSitting(player)) {
             ArmorStand seat = getSeats().get(player.getUniqueId());
-            getSeats().remove(player.getUniqueId());
-            player.eject();
-            player.teleport(seat.getLocation().clone().add(0.0, 1.7, 0.0));
+            seat.eject();
+            player.teleport(seat.getLocation().add(0.0, 1.7, 0.0));
             seat.remove();
+            getSeats().remove(player.getUniqueId());
         }
     }
 
@@ -71,11 +71,11 @@ public class SeatManager {
         public void run() {
             for (ArmorStand armorstand : this.seatManager.getSeats().values()) {
                 try {
-                    Object entityArmorStand = armorstand.getClass().getMethod("getHandle").invoke(armorstand);
+                    /*TODO Object entityArmorStand = armorstand.getClass().getMethod("getHandle").invoke(armorstand);
                     Field yaw = entityArmorStand.getClass().getField("yaw");
-                    yaw.set(entityArmorStand, armorstand.getPassengers().get(0).getLocation().getYaw());
+                    yaw.set(entityArmorStand, armorstand.getPassengers().get(0).getLocation().getYaw());*/
                 }
-                catch (IllegalAccessException | IllegalArgumentException | NoSuchFieldException | NoSuchMethodException | SecurityException | InvocationTargetException exception) {
+                catch (Exception exception) {
                     exception.printStackTrace();
                 }
             }

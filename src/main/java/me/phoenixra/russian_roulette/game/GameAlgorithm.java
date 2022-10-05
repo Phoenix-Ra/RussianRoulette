@@ -16,6 +16,8 @@ public class GameAlgorithm {
     HashMap<Player, Integer> bulletsAmount = new HashMap<>();
     HashMap<Player, Integer> playerLuck = new HashMap<>();
     private int bulletsLimit=6;
+    private final int MAX_LUCK=10;
+    private final int MIN_LUCK=-25;
     public GameAlgorithm(Game game){
         this.game=game;
     }
@@ -24,7 +26,7 @@ public class GameAlgorithm {
         if(game.isShooting()) {
             return;
         }
-        game.setIsShooting(true);
+        game.setShooting(true);
         game.getBidAlgorithm().clearBids();
         game.broadcastSound(Sound.ENTITY_WITHER_SPAWN,true);
         shooter.sendTitle(shooter.getName(), GameSymbols.shoot());
@@ -36,9 +38,9 @@ public class GameAlgorithm {
                             .replace("%shooter%",shooter.getName())
                             .replace("%victim%",shooter.getName())
                             .replace("%bullets%",getBulletsPlaced(shooter)+"")
-                            .replace("%shooter_luck%",game.getAlgorithm().getGiftChance(shooter)+"")
-                            .replace("%victim_luck%",game.getAlgorithm().getGiftChance(shooter)+"")
-                            .replace("%shoot_chance%",game.getAlgorithm().getCurrentChanceToDie(shooter)+"")
+                            .replace("%shooter_luck%",game.getGameAlgorithm().getPlayerLuck(shooter)+"")
+                            .replace("%victim_luck%",game.getGameAlgorithm().getPlayerLuck(shooter)+"")
+                            .replace("%shoot_chance%",game.getGameAlgorithm().getCurrentChanceToDie(shooter)+"")
             );
             message.append("\n");
         }
@@ -64,7 +66,7 @@ public class GameAlgorithm {
         }
         game.teleportPlayerToCenter(victim);
 
-        game.setIsShooting(true);
+        game.setShooting(true);
         game.getBidAlgorithm().clearBids();
         game.broadcastSound(Sound.ENTITY_WITHER_SPAWN,true);
         victim.sendTitle(shooter.getName(), GameSymbols.shoot());
@@ -76,9 +78,9 @@ public class GameAlgorithm {
                             .replace("%shooter%",shooter.getName())
                             .replace("%victim%",victim.getName())
                             .replace("%bullets%",getBulletsPlaced(shooter)+"")
-                            .replace("%shooter_luck%",game.getAlgorithm().getGiftChance(shooter)+"")
-                            .replace("%victim_luck%",game.getAlgorithm().getGiftChance(victim)+"")
-                            .replace("%shoot_chance%",game.getAlgorithm().getCurrentChanceToDie(shooter)+"")
+                            .replace("%shooter_luck%",game.getGameAlgorithm().getPlayerLuck(shooter)+"")
+                            .replace("%victim_luck%",game.getGameAlgorithm().getPlayerLuck(victim)+"")
+                            .replace("%shoot_chance%",game.getGameAlgorithm().getCurrentChanceToDie(shooter)+"")
             );
             message.append("\n");
         }
@@ -110,7 +112,7 @@ public class GameAlgorithm {
         else game.victimSurvived();
 
         game.roundCache=new Game.RoundCache(shooter,victim, result);
-        game.setIsShooting(false);
+        game.setShooting(false);
     }
     public void changeAmountOfBullets(Player p) {
         int i=0;
@@ -142,7 +144,7 @@ public class GameAlgorithm {
         bulletsAmount.replace(p, i);
     }
     public void setPlayerLuck(Player p, int amount) {
-        if(amount>10||amount<-25 || !playerLuck.containsKey(p)) {
+        if(amount>MAX_LUCK||amount<MIN_LUCK || !playerLuck.containsKey(p)) {
             return;
         }
         playerLuck.put(p, amount);
@@ -155,7 +157,7 @@ public class GameAlgorithm {
     public int getCurrentChanceToKill(Player shooter, Player shootedAt) {
         return (int)((float)(bulletsAmount.get(shooter))/(float)(bulletsLimit)*100+playerLuck.get(shooter)-+playerLuck.get(shootedAt));
     }
-    public int getGiftChance(Player p) {
+    public int getPlayerLuck(Player p) {
         if(playerLuck.get(p)==null) {
             this.addPlayer(p);
         }

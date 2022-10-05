@@ -1,5 +1,6 @@
 package me.phoenixra.russian_roulette.game;
 
+import lombok.Getter;
 import me.phoenixra.russian_roulette.files.LangClass;
 import me.phoenixra.russian_roulette.utils.ItemBuilder;
 import org.bukkit.Material;
@@ -11,11 +12,12 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 
 public class BidAlgorithm {
-    private HashMap<Player, Boolean> playerBid = new HashMap<>();
     private Game game;
-    private int loseBonus = 1;
-    private int winBonus = 1;
-    private boolean bidStarted;
+    private HashMap<Player, Boolean> playerBid = new HashMap<>();
+
+    @Getter private final int loseBonus = 1;
+    @Getter private final int winBonus = 1;
+    @Getter private boolean bidStarted;
     public BidAlgorithm(Game game) {
         this.game = game;
     }
@@ -42,8 +44,8 @@ public class BidAlgorithm {
         for (Player player : game.getPlayers()) {
             if (player == shooter || player == victim || !playerBid.containsKey(player)) continue;
             player.getInventory().clear();
-            game.getAlgorithm().setPlayerLuck(player,
-                    game.getAlgorithm().getGiftChance(player) + (successShoot == playerBid.get(player) ? winBonus : loseBonus));
+            game.getGameAlgorithm().setPlayerLuck(player,
+                    game.getGameAlgorithm().getPlayerLuck(player) + (successShoot == playerBid.get(player) ? winBonus : loseBonus));
 
         }
 
@@ -101,17 +103,5 @@ public class BidAlgorithm {
         playerBid.clear();
     }
 
-
-    public boolean isBidStarted() {
-        return this.bidStarted;
-    }
-
-    public int getWinBonus() {
-        return this.winBonus;
-    }
-
-    public int getLoseBonus() {
-        return this.loseBonus;
-    }
 
 }

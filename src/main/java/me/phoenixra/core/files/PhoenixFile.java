@@ -54,11 +54,9 @@ public abstract class PhoenixFile {
 
                     }
 
-                    if(head.value()!=null) {
-                        for(String s : head.value()) {
-                            if(!s.equals("")) {
-                                pw.println(key.space()+s);
-                            }
+                    for(String s : head.value()) {
+                        if(!s.equals("")) {
+                            pw.println(key.space()+s);
                         }
                     }
                     if(key.isSection()) {
@@ -66,35 +64,35 @@ public abstract class PhoenixFile {
                         continue;
                     }
                     if(f.getType()==int.class) {
-                        pw.println(key.space()+path+": " + f.getInt(fileClass.getReference(i)));
+                        pw.println(key.space()+path+": " + f.getInt(fileClass));
                         continue;
                     }
                     if(f.getType()==double.class) {
-                        pw.println(key.space()+path+": " + f.getDouble(fileClass.getReference(i)));
+                        pw.println(key.space()+path+": " + f.getDouble(fileClass));
                         continue;
                     }
                     if(f.getType()==long.class) {
-                        pw.println(key.space()+path+": " + f.getLong(fileClass.getReference(i)));
+                        pw.println(key.space()+path+": " + f.getLong(fileClass));
                         continue;
                     }
                     if(f.getType()==String.class) {
-                        pw.println(key.space()+path+": " + "\"" + f.get(fileClass.getReference(i)) + "\"");
-                        f.set(fileClass.getReference(i), PhoenixUtils.colorFormat(((String)f.get(fileClass.getReference(i)))).replace("\\n","\n"));
+                        pw.println(key.space()+path+": " + "\"" + f.get(fileClass) + "\"");
+                        f.set(fileClass, PhoenixUtils.colorFormat(((String)f.get(fileClass))).replace("\\n","\n"));
                         continue;
                     }
                     if(f.getType()==boolean.class) {
-                        pw.println(key.space()+path+": " + f.get(fileClass.getReference(i)));
+                        pw.println(key.space()+path+": " + f.get(fileClass));
                         continue;
                     }
                     if(f.getType()== List.class) {
-                        List<String> var = (List<String>) f.get(fileClass.getReference(i));
+                        List<String> var = (List<String>) f.get(fileClass);
                         List<String> list=new ArrayList<>();
                         pw.println(key.space()+path + ":");
                         for(String s : var){
                             pw.println(key.space()+"- \""+s+"\"");
                             list.add(PhoenixUtils.colorFormat(s).replace("\\n","\n"));
                         }
-                        f.set(fileClass.getReference(i), list);
+                        f.set(fileClass, list);
                     }
                 }
                 pw.close();
@@ -131,23 +129,23 @@ public abstract class PhoenixFile {
                     if(this.getFileC().getString(key.path())!=null) {
                         try {
                             if(f.getType()==boolean.class) {
-                                f.set(fileClass.getReference(i), this.getFileC().getBoolean(key.path()));
+                                f.set(fileClass, this.getFileC().getBoolean(key.path()));
                                 continue;
                             }
                             if(f.getType()==int.class) {
-                                f.set(fileClass.getReference(i), this.getFileC().getInt(key.path()));
+                                f.set(fileClass, this.getFileC().getInt(key.path()));
                                 continue;
                             }
                             if(f.getType()==long.class) {
-                                f.set(fileClass.getReference(i), this.getFileC().getLong(key.path()));
+                                f.set(fileClass, this.getFileC().getLong(key.path()));
                                 continue;
                             }
                             if(f.getType()==double.class) {
-                                f.set(fileClass.getReference(i), this.getFileC().getDouble(key.path()));
+                                f.set(fileClass, this.getFileC().getDouble(key.path()));
                                 continue;
                             }
                             if(f.getType()==String.class) {
-                                f.set(fileClass.getReference(i), PhoenixUtils.colorFormat(this.getFileC().getString(key.path())).replace("\\n","\n"));
+                                f.set(fileClass, PhoenixUtils.colorFormat(this.getFileC().getString(key.path())).replace("\\n","\n"));
                                 continue;
                             }
                             if(f.getType()==List.class) {
@@ -156,7 +154,7 @@ public abstract class PhoenixFile {
 
                                     l.add(PhoenixUtils.colorFormat(s).replace("\\n","\n"));
                                 }
-                                f.set(fileClass.getReference(i), l);
+                                f.set(fileClass, l);
 
                             }
                         } catch (IllegalArgumentException | IllegalAccessException e) {
