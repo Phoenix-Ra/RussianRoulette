@@ -328,7 +328,7 @@ public class Game {
                     getGameAlgorithm().setBulletsPlaced(shooter, 6 - (getGameAlgorithm().getBulletsPlaced(shooter) + 1));
                 }
             }
-            victim.setHealth(((double) MAX_LIVES / playerLives.get(victim)) * 20);
+            victim.setHealth(((double) playerLives.get(victim) / MAX_LIVES) * 20);
         }
         this.getTimer().setTimer(GameTask.Timer.NEXT_SHOOTER_DELAY);
     }
