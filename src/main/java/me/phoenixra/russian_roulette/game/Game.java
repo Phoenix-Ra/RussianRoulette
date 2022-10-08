@@ -310,7 +310,7 @@ public class Game {
             }
             addSpectator(victim);
 
-            Random random = new Random();
+            Random random = new Random(System.nanoTime());
             if (victim != shooter) {
                 int n = random.nextInt(LangClass.messages_player_killed_other.size() - 1);
                 broadcastMessage(LangClass.messages_player_killed_other.get(n).replace("%shooter%", shooter.getName()).replace("%victim%", victim.getName()));
@@ -320,7 +320,7 @@ public class Game {
             }
         } else {
             if (shooter != victim) {
-                Random r = new Random();
+                Random r = new Random(System.nanoTime());
                 int n = r.nextInt(LangClass.messages_player_damaged_other.size() - 1);
                 broadcastMessage(LangClass.messages_player_damaged_other.get(n).replace("%shooter%", shooter.getName()).replace("%victim%", victim.getName()));
             } else {
