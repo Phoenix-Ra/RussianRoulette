@@ -98,6 +98,10 @@ public class RussianRoulette extends JavaPlugin {
         }
     }
 
+    public static void doSync(Runnable runnable) {
+        instance.getServer().getScheduler().runTask(instance, runnable);
+    }
+    public static void doAsync(Runnable runnable) {instance.getServer().getScheduler().runTaskAsynchronously(instance, runnable); }
 
     public ConfigFile getConfigFile() {
         return (ConfigFile) fileManager.getFile("config");
