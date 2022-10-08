@@ -52,16 +52,19 @@ public class GameListener implements Listener {
             alreadyInteract = true;
             if (game.getBidAlgorithm().isBidStarted()) {
                 game.getBidAlgorithm().playerMadeBid(player,
-                        player.getInventory().getItemInMainHand().getType() == Material.GREEN_STAINED_GLASS_PANE);
+                        player.getInventory().getItemInMainHand().getType() == Material.RED_TERRACOTTA);
             }
             else if (game.getRound() == Game.GameRound.FIRST) {
                 if (player.getInventory().getItemInMainHand().getType() == Material.GUNPOWDER) {
                     ItemStack itemStack = new ItemBuilder(Material.HOPPER)
                             .setDisplayName(LangClass.item_removeBullet)
                             .getItem();
-                    player.getInventory().setItem(player.getInventory().getHeldItemSlot(), itemStack);
-
-                    game.getGameAlgorithm().changeAmountOfBullets(player);
+                    ItemStack finalItemStack = itemStack;
+                    //Without setting an item on next tick, nothing will change
+                    RussianRoulette.doSync(()->{
+                        player.getInventory().setItem(player.getInventory().getHeldItemSlot(), finalItemStack);
+                        game.getGameAlgorithm().changeAmountOfBullets(player);
+                    });
 
                     itemStack = new ItemBuilder(Material.FIRE_CHARGE)
                             .setDisplayName(LangClass.item_shoot
@@ -69,7 +72,9 @@ public class GameListener implements Listener {
                                     .replace("%bullets%",game.getGameAlgorithm().getBulletsPlaced(player)+""))
                             .addItemFlag(ItemFlag.HIDE_ATTRIBUTES)
                             .getItem();
-                    player.getInventory().setItem(4, itemStack);
+                    ItemStack finalItemStack1 = itemStack;
+                    //Without setting an item on next tick, nothing will change
+                    RussianRoulette.doSync(()-> player.getInventory().setItem(4, finalItemStack1));
                     player.playSound(player.getLocation(), Sound.ENTITY_WITCH_AMBIENT, 1.0f, 10.0f);
 
                 }
@@ -78,8 +83,12 @@ public class GameListener implements Listener {
                             .setDisplayName(LangClass.item_addBullet)
                             .getItem();
                     player.getInventory().setItem(player.getInventory().getHeldItemSlot(), itemStack);
-
-                    game.getGameAlgorithm().changeAmountOfBullets(player);
+                    ItemStack finalItemStack = itemStack;
+                    //Without setting an item on next tick, nothing will change
+                    RussianRoulette.doSync(()->{
+                        player.getInventory().setItem(player.getInventory().getHeldItemSlot(), finalItemStack);
+                        game.getGameAlgorithm().changeAmountOfBullets(player);
+                    });
 
                     itemStack = new ItemBuilder(Material.FIRE_CHARGE)
                             .setDisplayName(LangClass.item_shoot
@@ -89,6 +98,10 @@ public class GameListener implements Listener {
                             .getItem();
 
                     player.getInventory().setItem(4, itemStack);
+                    ItemStack finalItemStack1 = itemStack;
+                    //Without setting an item on next tick, nothing will change
+                    RussianRoulette.doSync(()-> player.getInventory().setItem(4, finalItemStack1));
+
                     player.playSound(player.getLocation(), Sound.ENTITY_WITCH_AMBIENT, 1.0f, 10.0f);
 
 
