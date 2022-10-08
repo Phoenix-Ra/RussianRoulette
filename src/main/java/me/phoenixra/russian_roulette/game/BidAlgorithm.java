@@ -15,7 +15,7 @@ public class BidAlgorithm {
     private Game game;
     private HashMap<Player, Boolean> playerBid = new HashMap<>();
 
-    @Getter private final int loseBonus = 1;
+    @Getter private final int loseBonus = -1;
     @Getter private final int winBonus = 1;
     @Getter private boolean bidStarted;
     public BidAlgorithm(Game game) {
