@@ -42,8 +42,10 @@ public class BidAlgorithm {
         if (!this.bidStarted) return;
 
         for (Player player : game.getPlayers()) {
-            if (player == shooter || player == victim || !playerBid.containsKey(player)) continue;
+            if (player == shooter || player == victim) continue;
             player.getInventory().clear();
+
+            if(playerBid.containsKey(player))
             game.getGameAlgorithm().setPlayerLuck(player,
                     game.getGameAlgorithm().getPlayerLuck(player) + (successShoot == playerBid.get(player) ? winBonus : loseBonus));
 
