@@ -110,7 +110,7 @@ public class GameTask extends BukkitRunnable {
                     );
                     game.broadcastMessage(message.toString());
 
-                    game.broadcastTitle("&a\u2728\u2B50\u2728", "", false);
+                    game.broadcastTitle(LangClass.titles_youWon, "", false);
 
                 }
                 if (timer.timeLeft() == 9) {
@@ -209,6 +209,9 @@ public class GameTask extends BukkitRunnable {
 
         protected int timeLeft() {
             return timer;
+        }
+        protected void setTimer(int value){
+            timer=value;
         }
 
     }
