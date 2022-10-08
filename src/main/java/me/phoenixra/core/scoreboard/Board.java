@@ -97,18 +97,7 @@ public class Board {
         }
     }
 
-    public void test(Player player, boolean value, List<Player> players) {
-        Team team = player.getScoreboard().getTeam("nameTag");
-        if (team == null) team = player.getScoreboard().registerNewTeam("nameTag");
-        if (value)
-            player.getScoreboard().registerNewTeam("nameTag").setOption(Team.Option.NAME_TAG_VISIBILITY, Team.OptionStatus.ALWAYS);
-        else
-            player.getScoreboard().registerNewTeam("nameTag").setOption(Team.Option.NAME_TAG_VISIBILITY, Team.OptionStatus.NEVER);
 
-        for (Player p : players) {
-            team.addEntry(p.getName());
-        }
-    }
 
     public boolean has(Player player) {
         return player.getScoreboard() == sb.get(player);
