@@ -29,7 +29,7 @@ public class GameAlgorithm {
         game.setShooting(true);
         game.getBidAlgorithm().clearBids();
         game.broadcastSound(Sound.ENTITY_WITHER_SPAWN,true);
-        shooter.sendTitle(shooter.getName(), GameSymbols.shoot());
+        game.broadcastTitle(PhoenixUtils.colorFormat("&a")+shooter.getName(), GameSymbols.shoot("&c"),true);
 
         StringBuilder message=new StringBuilder();
         for(String line : LangClass.messages_bid_started_suicide){
@@ -69,7 +69,9 @@ public class GameAlgorithm {
         game.setShooting(true);
         game.getBidAlgorithm().clearBids();
         game.broadcastSound(Sound.ENTITY_WITHER_SPAWN,true);
-        victim.sendTitle(shooter.getName(), GameSymbols.shoot());
+        game.broadcastTitle(PhoenixUtils.colorFormat("&e")+shooter.getName(),
+                GameSymbols.shoot("&c")+
+                        PhoenixUtils.colorFormat("&e")+victim.getName()+GameSymbols.shoot("&c"),true);
 
         StringBuilder message=new StringBuilder();
         for(String line : LangClass.messages_bid_started_killOther){
