@@ -363,7 +363,7 @@ public class LangClass extends PhoenixFileClass {
     public static String item_bidYes="&cWill shoot";
 
     @ConfigHeader(value = { " "})
-    @ConfigKey(path="ITEMS.bidYes", space= "  ")
+    @ConfigKey(path="ITEMS.bidNo", space= "  ")
     public static String item_bidNo="&aWon't shoot";
 
     @ConfigHeader(value = { " "})
