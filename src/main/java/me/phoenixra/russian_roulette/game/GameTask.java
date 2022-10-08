@@ -62,7 +62,6 @@ public class GameTask extends BukkitRunnable {
                             }
                         }
                     } else {
-                        setTimer(Timer.SHOOTER_DECIDING);
                         game.nextRound();
                     }
                 } else if (timer == Timer.SHOOTER_DECIDING) {
