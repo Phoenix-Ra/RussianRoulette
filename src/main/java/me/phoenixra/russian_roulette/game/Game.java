@@ -65,7 +65,7 @@ public class Game {
         round = GameRound.FIRST;
         for (Player p : this.getPlayers()) {
             p.getInventory().clear();
-            ScoreboardBuilder.applyScoreboard(p, ScoreboardBuilder.ScoreboardType.GAME);
+            GameScoreboard.applyScoreboard(p, GameScoreboard.ScoreboardType.GAME);
         }
 
         shooterSeat = victimSeat = findNextShooterSeat(true);
@@ -74,6 +74,16 @@ public class Game {
         setupShooterInventory(playerSeat.get(shooterSeat));
 
         setRoundState(RoundState.SHOOTER_DECIDING, true);
+    }
+    public void forceStart(){
+        if(state==GameState.PENDING_FOR_PLAYERS) setState(GameState.STARTING);
+        if(state!=GameState.STARTING) return;
+        if(timer.getCurrentTimer().timeLeft()<5) return;
+        timer.getCurrentTimer().setTimer(5);
+        for(Player player : players){
+            player.getInventory().clear(0);
+        }
+
     }
 
     public void enableGame() {
@@ -110,7 +120,7 @@ public class Game {
         p.teleport(getPlayerSeatLocation(p).getLocation());
         RussianRoulette.getInstance().getSeatManager().setSitting(p, true);
 
-        ScoreboardBuilder.applyScoreboard(p, ScoreboardBuilder.ScoreboardType.STARTING);
+        GameScoreboard.applyScoreboard(p, GameScoreboard.ScoreboardType.STARTING);
 
         gameAlgorithm.addPlayer(p);
         playerLives.put(p, MAX_LIVES);
@@ -202,12 +212,16 @@ public class Game {
         p.teleport(this.getArena().getSpectatorSpawn().getLocation());
 
         p.setGameMode(GameMode.ADVENTURE);
+        p.setAllowFlight(true);
+        p.setFlying(true);
         ItemStack itemStack = new ItemBuilder(Material.RED_BED).setDisplayName("&cLeave").getItem();
         p.getInventory().setItem(0, itemStack);
         p.getInventory().setItem(8, itemStack);
         p.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 1));
 
-        ScoreboardBuilder.applyScoreboard(p, ScoreboardBuilder.ScoreboardType.SPECTATOR);
+        GameScoreboard.applyScoreboard(p, GameScoreboard.ScoreboardType.SPECTATOR);
+        //run next tick, to handle an exception with null scoreboard
+        RussianRoulette.doSync(()->NameTagVisibility.addPlayer(this, p));
 
         Utils.separatePlayer(p);
         p.sendTitle(LangClass.titles_BecameSpectator, "");
@@ -235,7 +249,7 @@ public class Game {
         }
         shooter.sendTitle(LangClass.titles_yourTurn, "");
 
-        setRoundState(RoundState.NEXT_SHOOTER_DELAY, true);
+        setRoundState(RoundState.SHOOTER_DECIDING, true);
     }
 
     public void nextShooter() {
@@ -325,7 +339,9 @@ public class Game {
                 broadcastMessage(LangClass.messages_player_damaged_other.get(n).replace("%shooter%", shooter.getName()).replace("%victim%", victim.getName()));
             } else {
                 if (this.round == GameRound.FIRST) {
-                    getGameAlgorithm().setBulletsPlaced(shooter, 6 - (getGameAlgorithm().getBulletsPlaced(shooter) + 1));
+                    int bullets = getGameAlgorithm().getBulletsPlaced(shooter);
+                    getGameAlgorithm().setBulletsPlaced(shooter, bullets == 6 ?
+                            1 : 6 - (getGameAlgorithm().getBulletsPlaced(shooter)));
                 }
             }
             victim.setHealth(((double) playerLives.get(victim) / MAX_LIVES) * 20);
@@ -357,8 +373,7 @@ public class Game {
         if (this.round == GameRound.FIRST) {
             int bullets = getGameAlgorithm().getBulletsPlaced(shooter);
             getGameAlgorithm().setBulletsPlaced(shooter, bullets == 6 ?
-                    1 : bullets == 0 ?
-                    6 : 6 - (getGameAlgorithm().getBulletsPlaced(shooter) + 1));
+                    1 : 6 - (getGameAlgorithm().getBulletsPlaced(shooter)));
         }
         this.getTimer().setTimer(GameTask.Timer.NEXT_SHOOTER_DELAY);
     }
@@ -523,7 +538,7 @@ public class Game {
     }
 
     private void clearPlayerCache(Player p, boolean removeFromList) {
-        ScoreboardBuilder.removeScoreboard(p);
+        GameScoreboard.removeScoreboard(p);
         if(removeFromList) players.remove(p);
         if(removeFromList) spectators.remove(p);
         playerLives.remove(p);

@@ -22,33 +22,37 @@ public class SelectorMenuListener implements Listener {
     public void menuClick(InventoryClickEvent event) {
         Player player = (Player) event.getWhoClicked();
         ItemStack itemStack = event.getCurrentItem();
-        if (itemStack == null || !itemStack.hasItemMeta()) {
+        if (itemStack == null) {
             return;
         }
-        String itemName = itemStack.getItemMeta().getDisplayName();
+
         if (event.getView().getTitle().equalsIgnoreCase(LangClass.gui_GameSelectorMainPage)) {
             event.setCancelled(true);
-            if (itemName.equalsIgnoreCase(LangClass.gui_playItem_name)) {
-                player.performCommand("rr playRandom");
+            if(itemStack.hasItemMeta()) {
+                if (itemStack.getItemMeta().getDisplayName().equalsIgnoreCase(LangClass.gui_playItem_name)) {
+                    player.performCommand("rr playRandom");
+                    player.closeInventory();
+                }
+                else if (itemStack.getItemMeta().getDisplayName().equalsIgnoreCase(LangClass.gui_chooseArenaItem_name)) {
+                    Utils.openSelector(player);
+                    player.playSound(player.getLocation(), GameSounds.cLickGUI(), 1.0f, 1.0f);
+                }
             }
-            if (itemName.equalsIgnoreCase(LangClass.gui_chooseArenaItem_name)) {
-                Utils.openSelector(player);
-                player.playSound(player.getLocation(), GameSounds.cLickGUI(), 1.0f, 1.0f);
+            if (itemStack.getType() == Material.BARRIER) player.closeInventory();
+            else if (itemStack.getType() == Material.YELLOW_STAINED_GLASS_PANE) {
+
+                if(event.getCursor()!=null) event.getCursor().setType(Material.AIR);
             }
 
-            if (itemStack.getType() == Material.BARRIER) {
-                player.closeInventory();
-            }
         }
 
 
         if (event.getView().getTitle().equalsIgnoreCase(LangClass.gui_GameSelectorArenasPage)) {
             event.setCancelled(true);
-            if (itemStack.getType() == Material.BARRIER) player.closeInventory();
-
-            if (itemStack.getType() == Material.MAP) {
+            if (itemStack.getType() == Material.BARRIER) Utils.openPlay(player);
+            else if (itemStack.getType() == Material.MAP && itemStack.hasItemMeta()) {
                 String gameName = RussianRoulette.getInstance().getGameM().
-                        getGame(ChatColor.stripColor(itemName)).getArena().getArenaName();
+                        getGame(ChatColor.stripColor(itemStack.getItemMeta().getDisplayName())).getArena().getArenaName();
                 if (gameName == null) {
                     return;
                 }

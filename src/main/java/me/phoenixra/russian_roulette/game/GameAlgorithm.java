@@ -1,8 +1,10 @@
 package me.phoenixra.russian_roulette.game;
 
+import me.phoenixra.core.PhoenixUtils;
 import me.phoenixra.russian_roulette.files.LangClass;
 import me.phoenixra.russian_roulette.utils.GameSymbols;
 import me.phoenixra.russian_roulette.utils.ItemBuilder;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -55,10 +57,6 @@ public class GameAlgorithm {
         game.getBidAlgorithm().startBid(shooter, shooter);
 
     }
-    public boolean shootItselfResult(Player shooter) {
-        int randomResult = new Random(System.currentTimeMillis()).nextInt(99)+1;
-        return randomResult <= (float) (bulletsAmount.get(shooter)) / (float) (bulletsLimit) * 100 - playerLuck.get(shooter);
-    }
 
     public void shootVictimPrepare(Player shooter,Player victim) {
         if(game.isShooting()) {
@@ -94,12 +92,18 @@ public class GameAlgorithm {
         shooter.getInventory().setItem(4, itemStack);shooter.getInventory().setItem(5, itemStack);
         shooter.getInventory().setItem(6, itemStack);shooter.getInventory().setItem(7, itemStack);
         shooter.getInventory().setItem(8, itemStack);
-        game.getBidAlgorithm().startBid(shooter, null);
+        game.getBidAlgorithm().startBid(shooter, victim);
 
     }
+    public boolean shootItselfResult(Player shooter) {
+        int randomResult = new Random(System.nanoTime()).nextInt(99)+1;
+        double chance = ((double)bulletsAmount.get(shooter)/bulletsLimit) * 100 - playerLuck.get(shooter);
+        return randomResult <= chance;
+    }
     public boolean shootVictimResult(Player shooter, Player victim) {
-        int randomResult = new Random(System.currentTimeMillis()).nextInt(99)+1;
-        return randomResult <= (double) (bulletsAmount.get(shooter)) / (double) (bulletsLimit) * 100 + playerLuck.get(shooter) - playerLuck.get(victim);
+        int randomResult = new Random(System.nanoTime()).nextInt(99)+1;
+        double chance = ((double)bulletsAmount.get(shooter)/bulletsLimit) * 100 + playerLuck.get(shooter) - playerLuck.get(victim);
+        return randomResult <= chance;
     }
 
 
@@ -107,6 +111,7 @@ public class GameAlgorithm {
         Player shooter = game.getShooter();
         Player victim = game.getVictim();
         shooter.getInventory().clear();
+
         boolean result = victim == shooter ? shootItselfResult(shooter) : shootVictimResult(shooter, victim);
 
         game.getBidAlgorithm().endBid( shooter, victim, result);
@@ -167,9 +172,6 @@ public class GameAlgorithm {
     }
     public int getBulletsPlaced(Player p) {
         return bulletsAmount.get(p);
-    }
-    public int getBulletsLimit() {
-        return bulletsLimit;
     }
 
 }

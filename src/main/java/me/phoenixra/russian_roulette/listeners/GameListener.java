@@ -40,8 +40,7 @@ public class GameListener implements Listener {
                         player.sendMessage(PhoenixUtils.colorFormat("&cAt least 2 players required"));
                         return;
                     }
-                    game.setState(Game.GameState.STARTING);
-                    player.getInventory().clear(0);
+                    game.forceStart();
                 }
                 if (player.getInventory().getHeldItemSlot() == 8) player.performCommand("rr leave");
                 return;
@@ -141,23 +140,36 @@ public class GameListener implements Listener {
             Game game = RussianRoulette.getInstance().getGameM().getPlayerGame(player);
             if (game == null) return;
 
-            if (e.getAction() == InventoryAction.PICKUP_ALL || e.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY ||
-                    e.getAction() == InventoryAction.PICKUP_HALF || e.getAction() == InventoryAction.HOTBAR_MOVE_AND_READD ||
-                    e.getAction() == InventoryAction.HOTBAR_SWAP || e.getAction() == InventoryAction.CLONE_STACK ||
-                    e.getAction() == InventoryAction.COLLECT_TO_CURSOR || e.getAction() == InventoryAction.DROP_ALL_CURSOR ||
-                    e.getAction() == InventoryAction.DROP_ALL_SLOT || e.getAction() == InventoryAction.DROP_ONE_SLOT ||
-                    e.getAction() == InventoryAction.HOTBAR_MOVE_AND_READD || e.getAction() == InventoryAction.PICKUP_ONE ||
-                    e.getAction() == InventoryAction.SWAP_WITH_CURSOR)
-                e.setCancelled(true);
+            e.setCancelled(true);
 
 
             if (game.getPlayers().size() <= 1 || game.getState() == Game.GameState.FINISHING) {
-                e.setCancelled(true);
                 player.closeInventory();
                 return;
             }
+            if (e.getCurrentItem() == null) return;
+
+            if (e.getCurrentItem().getType() == Material.FIRE_CHARGE ) {
+                if( game.getRound() == Game.GameRound.FIRST||game.getRound() == Game.GameRound.SECOND){
+                    game.getGameAlgorithm().shootItselfPrepare(player);
+                    player.closeInventory();
+                }else {
+                    Inventory inventory = Bukkit.createInventory(null, 18, LangClass.gui_game_chooseVictim);
+                    for (Player p : game.getPlayers()) {
+                        if (p == player) {
+                            continue;
+                        }
+                        ItemStack itemStack = new ItemBuilder(Material.PLAYER_HEAD)
+                                .setDisplayName(ChatColor.GREEN + p.getName())
+                                .setOwner(p.getName())
+                                .getItem();
+                        inventory.addItem(itemStack);
+                    }
+                    player.openInventory(inventory);
+                }
+            }
+
             if (e.getView().getTitle().equals(LangClass.gui_game_chooseVictim)) {
-                if (e.getClickedInventory().getItem(e.getSlot()) == null) return;
 
                 Player victim = Bukkit.getPlayer(ChatColor.stripColor(e.getClickedInventory().getItem(e.getSlot()).getItemMeta().getDisplayName()));
                 if (game.getPlayers().contains(victim) && victim.isOnline()) {
@@ -168,7 +180,6 @@ public class GameListener implements Listener {
                 }
                 player.closeInventory();
             }
-            e.setCancelled(true);
 
         } catch (Exception ex) {
             ex.printStackTrace();

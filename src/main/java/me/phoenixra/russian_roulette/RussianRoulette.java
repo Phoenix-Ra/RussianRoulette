@@ -8,7 +8,7 @@ import me.phoenixra.russian_roulette.cmds.CommandArena;
 import me.phoenixra.russian_roulette.cmds.CommandPlayer;
 import me.phoenixra.russian_roulette.files.ConfigFile;
 import me.phoenixra.russian_roulette.files.LangFile;
-import me.phoenixra.russian_roulette.game.ScoreboardBuilder;
+import me.phoenixra.russian_roulette.game.GameScoreboard;
 import me.phoenixra.russian_roulette.listeners.*;
 import me.phoenixra.russian_roulette.playerSit.SeatManager;
 import net.milkbowl.vault.chat.Chat;
@@ -36,7 +36,7 @@ public class RussianRoulette extends JavaPlugin {
         seatManager = new SeatManager();
         editorM = new EditorManager();
         boardsManager = new BoardsManager(this);
-        new ScoreboardBuilder();
+        new GameScoreboard();
         //Vault
         setupChat();
 

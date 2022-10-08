@@ -6,11 +6,13 @@ import me.phoenixra.core.scoreboard.PlaceholderTask;
 import me.phoenixra.russian_roulette.RussianRoulette;
 import me.phoenixra.russian_roulette.files.LangClass;
 import org.bukkit.entity.Player;
+import org.bukkit.scoreboard.Team;
 
 import java.util.Collections;
+import java.util.List;
 
-public class ScoreboardBuilder {
-    public ScoreboardBuilder(){
+public class GameScoreboard {
+    public GameScoreboard(){
         loadBoards();
     }
 
@@ -242,7 +244,6 @@ public class ScoreboardBuilder {
         }
         if(type==ScoreboardType.GAME) {
             RussianRoulette.getInstance().getBoardsManager().addPlayerToBoard(player,"game");
-
         }
         if(type==ScoreboardType.SPECTATOR) {
             RussianRoulette.getInstance().getBoardsManager().addPlayerToBoard(player,"spectator");
@@ -254,6 +255,7 @@ public class ScoreboardBuilder {
     public static void removeScoreboard(Player p) {
         RussianRoulette.getInstance().getBoardsManager().removePlayer(p);
     }
+
 
     public enum ScoreboardType {
         STARTING,
