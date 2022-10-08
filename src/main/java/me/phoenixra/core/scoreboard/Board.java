@@ -45,8 +45,8 @@ public class Board {
                 }
                 objective.setDisplayName(displayName.get(update));
 
-                for (int i = scores.size(); i >= 0; --i) {
-                    String old = players.get(entry.getKey()).get(i==0 ? 0 : i-1);
+                for (int i = scores.size(); i > 0; --i) {
+                    String old = players.get(entry.getKey()).get(i-1);
                     String s = replacer.replace(entry.getKey(), scores.get(scores.size() - i));
                     if (s.equals(old)||old.isBlank()) continue;
                     if (s.isBlank()) s = " ".repeat(i);
