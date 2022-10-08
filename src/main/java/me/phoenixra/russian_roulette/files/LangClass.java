@@ -38,13 +38,13 @@ public class LangClass extends PhoenixFileClass {
     @ConfigKey(path="MESSAGES.startTimer", space="  ")
     public static String messages_startTimer = "&aGame starts in &l%timer%";
 
-    @ConfigHeader(value= {"#Final round message"})
+    @ConfigHeader(value= {""})
     @ConfigKey(path="MESSAGES.shooterBullets", space="  ")
     public static String messages_shooterBullets = "%shooter%&e received&c %bullets%&e  We all wonder, who will become a victim";
 
     @ConfigHeader(value= {""})
     @ConfigKey(path="MESSAGES.shooterDecideTooLong", space="  ")
-    public static String messages_shooterDecideTooLong = "%shooter%&с - Was too scared to shoot, the evil developers took control of him";
+    public static String messages_shooterDecideTooLong = "%shooter%&c - Was too scared to shoot, the evil developers took control of him";
 
     @ConfigHeader(value= {""})
     @ConfigKey(path="MESSAGES.playerEscaped", space="  ")
@@ -145,6 +145,10 @@ public class LangClass extends PhoenixFileClass {
     public static String titles_yourTurn = "&cYour turn";
 
     @ConfigHeader(value = {""})
+    @ConfigKey(path="TITLES.YouWon", space= "  ")
+    public static String titles_youWon = "&6You won!";
+
+    @ConfigHeader(value = {""})
     @ConfigKey(path="TITLES.secondRoundStart_title", space= "  ")
     public static String titles_secondRoundStart_title = "&aRound 2";
 
@@ -178,11 +182,11 @@ public class LangClass extends PhoenixFileClass {
 
     @ConfigHeader(value = {""})
     @ConfigKey(path="GUI.Selector.GameSelectorMainPage", space= "    ")
-    public static String gui_GameSelectorMainPage="Play the RussianRoulette";
+    public static String gui_GameSelectorMainPage="&6Play the RussianRoulette";
 
     @ConfigHeader(value = {""})
     @ConfigKey(path="GUI.Selector.GameSelectorArenasPage", space= "    ")
-    public static String gui_GameSelectorArenasPage="Choose arena";
+    public static String gui_GameSelectorArenasPage="&6Choose arena";
 
     @ConfigHeader(value = { " "})
     @ConfigKey(path="GUI.Selector.Items", space= "    ", isSection=true)
@@ -210,7 +214,8 @@ public class LangClass extends PhoenixFileClass {
     @ConfigKey(path="GUI.Selector.Items.playItem_lore", space= "      ")
     public static List<String> gui_playItem_lore=Arrays.asList(
             "&7Click to join the random game",
-            "&7The algorithm will send you to the game with most amount of players");
+            "&7The algorithm will send you to",
+            "&7the game with most amount of players");
 
     @ConfigHeader(value = {""})
     @ConfigKey(path="GUI.Selector.Items.chooseArenaItem_name", space= "      ")
@@ -234,9 +239,7 @@ public class LangClass extends PhoenixFileClass {
             "",
             "&eArena: &a%arena_name%",
             "&eMin players: &a%min_players%",
-            "",
-            "&ePending for players...",
-            "&e%current_players%/%max_players%");
+            "&ePending for players:&a %current_players%/%max_players%");
     @ConfigHeader(value = {""})
     @ConfigKey(path="HOLOGRAM.RoundDelay", space= "  ")
     public static List<String> hologram_RoundDelay=Arrays.asList(
@@ -360,11 +363,11 @@ public class LangClass extends PhoenixFileClass {
 
     @ConfigHeader(value = {""})
     @ConfigKey(path="ITEMS.bidYes", space= "  ")
-    public static String item_bidYes="&cWill shoot";
+    public static String item_bidYes="&cWill hit";
 
     @ConfigHeader(value = { " "})
     @ConfigKey(path="ITEMS.bidNo", space= "  ")
-    public static String item_bidNo="&aWon't shoot";
+    public static String item_bidNo="&aWon't hit";
 
     @ConfigHeader(value = { " "})
     @ConfigKey(path="ITEMS.addBullet", space= "  ")
