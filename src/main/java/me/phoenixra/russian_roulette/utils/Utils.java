@@ -20,7 +20,8 @@ public class Utils {
     public static Game getBestGame() {
         Game game = null;
         for (Game g : RussianRoulette.getInstance().getGameM().getGames()) {
-            if ((g.getPlayers().size() < g.getArena().getMaxPlayers()) && (g.getState() == Game.GameState.STARTING)) {
+            if ((g.getPlayers().size() < g.getArena().getMaxPlayers())
+                    && (g.getState() == Game.GameState.STARTING|| g.getState() == Game.GameState.PENDING_FOR_PLAYERS)) {
                 if (game == null) {
                     game = g;
                     continue;
@@ -38,6 +39,20 @@ public class Utils {
         inventory.setItem(31, new ItemBuilder().setType(Material.BARRIER).setDisplayName(LangClass.gui_closeItem_name).getItem());
         inventory.setItem(12, new ItemBuilder().setType(Material.RED_BED).setDisplayName(LangClass.gui_playItem_name).setLores(LangClass.gui_playItem_lore).getItem());
         inventory.setItem(14, new ItemBuilder().setType(Material.ACACIA_SIGN).setDisplayName(LangClass.gui_chooseArenaItem_name).setLores(LangClass.gui_chooseArenaItem_lore).getItem());
+
+        ItemStack decoration= new ItemBuilder(Material.YELLOW_STAINED_GLASS_PANE).setDisplayName("&eRussian&cRoulette").getItem();
+        inventory.setItem(0,decoration);
+        inventory.setItem(9,decoration);
+        inventory.setItem(18,decoration);
+        inventory.setItem(27,decoration);
+        inventory.setItem(28,decoration);
+
+        inventory.setItem(8,decoration);
+        inventory.setItem(17,decoration);
+        inventory.setItem(26,decoration);
+        inventory.setItem(34,decoration);
+        inventory.setItem(35,decoration);
+
         player.openInventory(inventory);
     }
 
