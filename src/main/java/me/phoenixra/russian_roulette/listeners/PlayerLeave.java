@@ -22,7 +22,7 @@ public class PlayerLeave implements Listener {
             return;
         }
         game.playerLeave(p);
-        NameTagVisibility.setVisibility(p,true);
+        NameTagVisibility.setVisibility(game,p,true);
     }
 
     @EventHandler
@@ -33,6 +33,6 @@ public class PlayerLeave implements Listener {
             return;
         }
         game.playerLeave(p);
-        NameTagVisibility.setVisibility(p,true);
+        NameTagVisibility.setVisibility(game,p,true);
     }
 }

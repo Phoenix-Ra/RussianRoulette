@@ -435,7 +435,7 @@ public class Game {
 
     public void teleportPlayerToCenter(Player p) {
         RussianRoulette.getInstance().getSeatManager().setSitting(p,false);
-        NameTagVisibility.setVisibility(p, false);
+        NameTagVisibility.setVisibility(this, p, false);
         p.teleport(arena.getCenter().getLocation());
     }
 
@@ -445,7 +445,7 @@ public class Game {
                 p.teleport(entry.getKey().getLocation());
                 RussianRoulette.getInstance().getSeatManager().setSitting(p,true);
                 p.getInventory().clear();
-                NameTagVisibility.setVisibility(p, true);
+                NameTagVisibility.setVisibility(this, p, true);
             }
         }
     }
