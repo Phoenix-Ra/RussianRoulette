@@ -9,6 +9,8 @@ import me.phoenixra.russian_roulette.files.ConfigClass;
 import me.phoenixra.russian_roulette.files.LangClass;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
+
 import java.util.Random;
 
 public class GameHologram extends PhoenixHologram {
@@ -64,7 +66,17 @@ public class GameHologram extends PhoenixHologram {
                                         :
                                         LangClass.hologram_misfire_random.get(r.nextInt(LangClass.hologram_misfire_random.size()-1));
 
+                        Material material=game.getRoundCache().shootSuccess()?
+                                game.getSpectators().contains(game.getRoundCache().getVictim())?
+                                        Material.SKELETON_SKULL
+                                        :
+                                        Material.FIRE_CHARGE
+                                :
+                                Material.COBWEB;
+
+                        addItemLine(material);
                         addLine(line);
+                        addItemLine(material);
                         currentState="active0";
                     }
                     break;

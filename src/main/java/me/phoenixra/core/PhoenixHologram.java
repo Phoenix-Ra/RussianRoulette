@@ -5,6 +5,7 @@ import eu.decentsoftware.holograms.api.DHAPI;
 import eu.decentsoftware.holograms.api.holograms.Hologram;
 import lombok.Getter;
 import org.bukkit.Location;
+import org.bukkit.Material;
 
 import java.util.*;
 
@@ -37,6 +38,9 @@ public class PhoenixHologram {
     public void addLine(String line){
         DHAPI.addHologramLine(hologram,line);
     }
+    public void addItemLine(Material material){
+        DHAPI.addHologramLine(hologram,material);
+    }
     public void changeLine(int line,String value){
         if(!isValidIndex(line)) return;
         DHAPI.setHologramLine(hologram,line,value);
@@ -54,7 +58,6 @@ public class PhoenixHologram {
         hologram = DHAPI.createHologram(id,location);
 
     }
-
     public void setVisible( boolean visible) {
         if(!visible) hologram.disable();
         if(!visible) hologram.enable();
