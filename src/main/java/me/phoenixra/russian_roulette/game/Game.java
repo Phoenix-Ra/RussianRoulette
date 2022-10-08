@@ -442,9 +442,9 @@ public class Game {
     public void teleportPlayerBack(Player p) {
         for (Map.Entry<CustomLocation, Player> entry : playerSeat.entrySet()) {
             if (entry.getValue() == p) {
-                p.teleport(playerSeat.get(entry.getKey()).getLocation());
-                p.getInventory().clear();
+                p.teleport(entry.getKey().getLocation());
                 RussianRoulette.getInstance().getSeatManager().setSitting(p,true);
+                p.getInventory().clear();
                 NameTagVisibility.setVisibility(p, true);
             }
         }
