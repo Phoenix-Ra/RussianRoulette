@@ -6,10 +6,8 @@ import me.phoenixra.core.scoreboard.PlaceholderTask;
 import me.phoenixra.russian_roulette.RussianRoulette;
 import me.phoenixra.russian_roulette.files.LangClass;
 import org.bukkit.entity.Player;
-import org.bukkit.scoreboard.Team;
 
 import java.util.Collections;
-import java.util.List;
 
 public class GameScoreboard {
     public GameScoreboard(){

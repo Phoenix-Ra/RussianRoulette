@@ -1,16 +1,12 @@
 package me.phoenixra.russian_roulette.utils;
 
 import me.phoenixra.russian_roulette.game.Game;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
-import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class NameTagVisibility {
     private static HashMap<Game,List<Player>> invisible=new HashMap<>();

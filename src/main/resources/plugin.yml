@@ -3,6 +3,11 @@ main: me.phoenixra.russian_roulette.RussianRoulette
 version: 1.0
 author: PhoenixRa
 api-version: 1.16
+website: https://www.spigotmc.org/resources/104593/
+depend:
+  - DecentHolograms
+softdepend:
+  - Vault
 commands:
   rr:
     description: for players

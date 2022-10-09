@@ -14,7 +14,7 @@ public class ServerListener implements Listener {
 
     @EventHandler
     public void onLoad(ServerLoadEvent event){
-        if(event.getType()== ServerLoadEvent.LoadType.STARTUP)
+        if(event.getType() == ServerLoadEvent.LoadType.STARTUP)
             RussianRoulette.getInstance().loadArenas();
     }
 }

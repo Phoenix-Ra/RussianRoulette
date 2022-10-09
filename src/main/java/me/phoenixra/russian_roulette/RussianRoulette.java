@@ -11,11 +11,11 @@ import me.phoenixra.russian_roulette.files.LangFile;
 import me.phoenixra.russian_roulette.game.GameScoreboard;
 import me.phoenixra.russian_roulette.listeners.*;
 import me.phoenixra.russian_roulette.playerSit.SeatManager;
+import me.phoenixra.russian_roulette.utils.Metrics;
 import net.milkbowl.vault.chat.Chat;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
-
 import java.util.logging.Level;
 
 public class RussianRoulette extends JavaPlugin {
@@ -67,6 +67,14 @@ public class RussianRoulette extends JavaPlugin {
         getCommand("rradmin").setTabCompleter(commandAdmin);
 
 
+        try {
+            if ((new Metrics(this, 16625)).isEnabled()) {
+                Bukkit.getConsoleSender().sendMessage("§7Metrics loaded successfully");
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
     }
 
     @Override
@@ -97,6 +105,8 @@ public class RussianRoulette extends JavaPlugin {
             Bukkit.getLogger().log(Level.INFO,"[RussianRoulette] Vault not found");
         }
     }
+
+
 
     public static void doSync(Runnable runnable) {
         instance.getServer().getScheduler().runTask(instance, runnable);

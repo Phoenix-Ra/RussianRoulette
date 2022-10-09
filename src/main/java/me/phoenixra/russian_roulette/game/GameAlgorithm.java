@@ -4,7 +4,6 @@ import me.phoenixra.core.PhoenixUtils;
 import me.phoenixra.russian_roulette.files.LangClass;
 import me.phoenixra.russian_roulette.utils.GameSymbols;
 import me.phoenixra.russian_roulette.utils.ItemBuilder;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -42,7 +41,7 @@ public class GameAlgorithm {
                             .replace("%bullets%",getBulletsPlaced(shooter)+"")
                             .replace("%shooter_luck%",game.getGameAlgorithm().getPlayerLuck(shooter)+"")
                             .replace("%victim_luck%",game.getGameAlgorithm().getPlayerLuck(shooter)+"")
-                            .replace("%shoot_chance%",game.getGameAlgorithm().getCurrentChanceToDie(shooter)+"")
+                            .replace("%shoot_chance%",game.getGameAlgorithm().getShootChance(shooter,null)+"")
             );
             message.append("\n");
         }
@@ -80,7 +79,7 @@ public class GameAlgorithm {
                             .replace("%bullets%",getBulletsPlaced(shooter)+"")
                             .replace("%shooter_luck%",game.getGameAlgorithm().getPlayerLuck(shooter)+"")
                             .replace("%victim_luck%",game.getGameAlgorithm().getPlayerLuck(victim)+"")
-                            .replace("%shoot_chance%",game.getGameAlgorithm().getCurrentChanceToDie(shooter)+"")
+                            .replace("%shoot_chance%",game.getGameAlgorithm().getShootChance(shooter,victim)+"")
             );
             message.append("\n");
         }
@@ -158,11 +157,9 @@ public class GameAlgorithm {
     }
 
 
-    public int getCurrentChanceToDie(Player p) {
-        return (int)((float)(bulletsAmount.get(p))/(float)(bulletsLimit)*100-playerLuck.get(p));
-    }
-    public int getCurrentChanceToKill(Player shooter, Player shootedAt) {
-        return (int)((float)(bulletsAmount.get(shooter))/(float)(bulletsLimit)*100+playerLuck.get(shooter)-+playerLuck.get(shootedAt));
+    public int getShootChance(Player shooter, Player victim){
+        if(victim==null||shooter==victim) return (int)(((double)bulletsAmount.get(shooter)/bulletsLimit) * 100 - playerLuck.get(shooter));
+        else return (int)(((double)bulletsAmount.get(shooter)/bulletsLimit) * 100 + playerLuck.get(shooter) - playerLuck.get(victim));
     }
     public int getPlayerLuck(Player p) {
         if(playerLuck.get(p)==null) {

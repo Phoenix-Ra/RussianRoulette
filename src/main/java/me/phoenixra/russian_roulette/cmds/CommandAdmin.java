@@ -1,15 +1,8 @@
 package me.phoenixra.russian_roulette.cmds;
 
-import com.google.common.collect.Maps;
 import me.phoenixra.core.PhoenixCommand;
 import me.phoenixra.russian_roulette.RussianRoulette;
 import me.phoenixra.russian_roulette.files.LangClass;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
-
-import java.lang.reflect.Method;
-import java.util.List;
-import java.util.Map;
 
 public class CommandAdmin extends PhoenixCommand {
     private final RussianRoulette plugin;
@@ -33,10 +26,9 @@ public class CommandAdmin extends PhoenixCommand {
         reply("&aSuccessfully reloaded");
 
     }
-    @SubCommand(description = "", minArgs = -1, usage = "/rradmin loadArenas")
+    @SubCommand(description = "use it if you reloaded plugin via PlugMan.", minArgs = -1, usage = "/rradmin loadArenas", permission = "*")
     public void loadArenas() {
         plugin.loadArenas();
-
     }
 
 }

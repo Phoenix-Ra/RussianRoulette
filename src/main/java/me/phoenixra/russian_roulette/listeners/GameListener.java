@@ -12,7 +12,6 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
@@ -65,7 +64,7 @@ public class GameListener implements Listener {
 
                         ItemStack itemStack1 = new ItemBuilder(Material.FIRE_CHARGE)
                                 .setDisplayName(LangClass.item_shoot
-                                        .replace("%chance%",game.getGameAlgorithm().getCurrentChanceToDie(player)+"")
+                                        .replace("%chance%",game.getGameAlgorithm().getShootChance(player,null)+"")
                                         .replace("%bullets%",game.getGameAlgorithm().getBulletsPlaced(player)+""))
                                 .addItemFlag(ItemFlag.HIDE_ATTRIBUTES)
                                 .getItem();
@@ -87,7 +86,7 @@ public class GameListener implements Listener {
 
                         ItemStack itemStack1 = new ItemBuilder(Material.FIRE_CHARGE)
                                 .setDisplayName(LangClass.item_shoot
-                                        .replace("%chance%",game.getGameAlgorithm().getCurrentChanceToDie(player)+"")
+                                        .replace("%chance%",game.getGameAlgorithm().getShootChance(player,null)+"")
                                         .replace("%bullets%",game.getGameAlgorithm().getBulletsPlaced(player)+""))
                                 .addItemFlag(ItemFlag.HIDE_ATTRIBUTES)
                                 .getItem();

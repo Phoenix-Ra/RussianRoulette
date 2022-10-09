@@ -253,7 +253,7 @@ public class LangClass extends PhoenixFileClass {
     public static List<String> hologram_WaitingForShooter=Arrays.asList(
             "&7>>&e%round%&7<<",
             "&eShooting: &a%shooting%&7->&c%victim%",
-            "&eChance to hit: &a%chance%%",
+            "&eChance to shoot: &a%shoot_chance%%",
             "",
             "&aWaiting for player's decision",
             "%timer%");
@@ -263,7 +263,7 @@ public class LangClass extends PhoenixFileClass {
     public static List<String> hologram_BetTime=Arrays.asList(
             "&7>>&e%round%&7<<",
             "&eShooting: &a%shooting%&7->&c%victim%",
-            "&eChance to hit: &a%chance%%",
+            "&eChance to shoot: &a%shoot_chance%%",
             "",
             "&aTime to bet!",
             "%timer%");
@@ -363,11 +363,11 @@ public class LangClass extends PhoenixFileClass {
 
     @ConfigHeader(value = {""})
     @ConfigKey(path="ITEMS.bidYes", space= "  ")
-    public static String item_bidYes="&cWill hit";
+    public static String item_bidYes="&cWill shoot";
 
     @ConfigHeader(value = { " "})
     @ConfigKey(path="ITEMS.bidNo", space= "  ")
-    public static String item_bidNo="&aWon't hit";
+    public static String item_bidNo="&aWon't shoot";
 
     @ConfigHeader(value = { " "})
     @ConfigKey(path="ITEMS.addBullet", space= "  ")

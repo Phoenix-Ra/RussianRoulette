@@ -1,10 +1,11 @@
 package me.phoenixra.russian_roulette.utils;
 
 import org.bukkit.Effect;
-import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 
+//TODO rewrite that
 public class GameEffects {
+
     public static void PlayerKilled(Player p) {
         /*PacketPlayOutWorldParticles packet = new PacketPlayOutWorldParticles(
                 EnumParticle.CRIT,    // particle type.

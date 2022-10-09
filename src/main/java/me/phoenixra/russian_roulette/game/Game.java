@@ -396,7 +396,7 @@ public class Game {
 
             shooter.getInventory().setItem(4, new ItemBuilder(Material.FIRE_CHARGE)
                     .setDisplayName(LangClass.item_shoot
-                            .replace("%chance%", getGameAlgorithm().getCurrentChanceToDie(shooter) + "")
+                            .replace("%chance%", getGameAlgorithm().getShootChance(shooter,null) + "")
                             .replace("%bullets%", getGameAlgorithm().getBulletsPlaced(shooter) + ""))
                     .addItemFlag(ItemFlag.HIDE_ATTRIBUTES)
                     .getItem());
@@ -404,7 +404,7 @@ public class Game {
         } else if (round == GameRound.SECOND) {
             shooter.getInventory().setItem(4, new ItemBuilder(Material.FIRE_CHARGE)
                     .setDisplayName(LangClass.item_shoot
-                            .replace("%chance%", getGameAlgorithm().getCurrentChanceToDie(shooter) + "")
+                            .replace("%chance%", getGameAlgorithm().getShootChance(shooter,null) + "")
                             .replace("%bullets%", getGameAlgorithm().getBulletsPlaced(shooter) + ""))
                     .addItemFlag(ItemFlag.HIDE_ATTRIBUTES)
                     .getItem());
@@ -412,7 +412,7 @@ public class Game {
         } else {
             shooter.getInventory().setItem(4, new ItemBuilder(Material.FIRE_CHARGE)
                     .setDisplayName(LangClass.item_shoot_victim
-                            .replace("%chance%", getGameAlgorithm().getCurrentChanceToDie(shooter) + "")
+                            .replace("%chance%", getGameAlgorithm().getShootChance(shooter,null) + "")
                             .replace("%bullets%", getGameAlgorithm().getBulletsPlaced(shooter) + ""))
                     .addItemFlag(ItemFlag.HIDE_ATTRIBUTES)
                     .getItem());
@@ -500,13 +500,10 @@ public class Game {
         firework.setFireworkMeta(fireworkMeta);
     }
 
-    public void playerShotEffect(Player p) {
-        //effects.PlayerOnShot(p);
-    }
 
     public void successShootEffect(Player p) {
         p.getWorld().strikeLightningEffect(p.getLocation());
-        //effects.PlayerKilled(p);
+        p.getWorld().playSound(p.getLocation(),Sound.ENTITY_LIGHTNING_BOLT_IMPACT,1,1);
     }
 
     public void survivedEffect(Player p) {

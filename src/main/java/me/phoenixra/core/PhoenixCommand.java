@@ -129,6 +129,7 @@ public abstract class PhoenixCommand implements CommandExecutor, TabExecutor {
             }
         }
         return list;
+
     }
 
     @SubCommand(description = "", minArgs = -1, usage = "defaultHelp")

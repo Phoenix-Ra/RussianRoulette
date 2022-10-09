@@ -1,6 +1,5 @@
 package me.phoenixra.russian_roulette.listeners;
 
-import me.phoenixra.core.PhoenixUtils;
 import me.phoenixra.russian_roulette.RussianRoulette;
 import me.phoenixra.russian_roulette.files.LangClass;
 import me.phoenixra.russian_roulette.game.Game;

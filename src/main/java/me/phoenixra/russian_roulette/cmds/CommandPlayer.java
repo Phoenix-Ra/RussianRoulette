@@ -10,7 +10,6 @@ import me.phoenixra.russian_roulette.utils.GameSounds;
 import me.phoenixra.russian_roulette.utils.Utils;
 import java.lang.reflect.Method;
 import java.util.Map;
-import java.util.Map.Entry;
 
 public class CommandPlayer extends PhoenixCommand {
     private final RussianRoulette plugin;

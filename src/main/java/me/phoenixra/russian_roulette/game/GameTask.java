@@ -4,7 +4,6 @@ import me.phoenixra.russian_roulette.RussianRoulette;
 import me.phoenixra.russian_roulette.files.ConfigClass;
 import me.phoenixra.russian_roulette.files.LangClass;
 import me.phoenixra.russian_roulette.utils.GameSounds;
-import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -23,7 +22,7 @@ public class GameTask extends BukkitRunnable {
 
     @Override
     public void run() {
-        Bukkit.getConsoleSender().sendMessage(getState()+":"+timer.timeLeft());
+        //Bukkit.getConsoleSender().sendMessage(getState()+":"+timer.timeLeft());
         switch (getState()) {
             case 2 -> {
                 if(timer != Timer.STARTING_GAME) setTimer(Timer.STARTING_GAME);

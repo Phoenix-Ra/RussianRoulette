@@ -1,13 +1,10 @@
 package me.phoenixra.russian_roulette.cmds;
 
-import com.google.common.collect.Maps;
 import me.phoenixra.core.PhoenixCommand;
 import me.phoenixra.core.PhoenixUtils;
 import me.phoenixra.russian_roulette.RussianRoulette;
 import me.phoenixra.russian_roulette.files.LangClass;
 import me.phoenixra.russian_roulette.game.Arena;
-import java.lang.reflect.Method;
-import java.util.Map;
 
 public class CommandArena extends PhoenixCommand {
     private final RussianRoulette plugin;
@@ -82,7 +79,7 @@ public class CommandArena extends PhoenixCommand {
         RussianRoulette.getInstance().getConfigFile().setLobby(player.getLocation());
         this.reply("&aMain lobby successfully installed");
     }
-    @SubCommand(description = "remove arena", minArgs = -1, usage = "/rrarena remove", sortOrder = 5)
+    @SubCommand(description = "remove arena", minArgs = 1, usage = "/rrarena remove", sortOrder = 5)
     public void remove() {
         String name=this.getArgument(1);
         boolean b = false;

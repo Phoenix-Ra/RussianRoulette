@@ -1,13 +1,9 @@
 package me.phoenixra.russian_roulette.game;
 
-import eu.decentsoftware.holograms.api.DecentHolograms;
-import eu.decentsoftware.holograms.api.DecentHologramsAPI;
-import eu.decentsoftware.holograms.api.holograms.Hologram;
 import me.phoenixra.core.PhoenixHologram;
 import me.phoenixra.core.PhoenixUtils;
 import me.phoenixra.russian_roulette.files.ConfigClass;
 import me.phoenixra.russian_roulette.files.LangClass;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 
@@ -143,9 +139,9 @@ public class GameHologram extends PhoenixHologram {
                 .replace("%timer%", timerReplace(game))
                 .replace("%victim%", game.getShooter()!=null?(game.getVictim()==null?
                         game.getShooter().getName():game.getVictim().getName()):"")
-                .replace("%chance%",game.getShooter()!=null?( game.getVictim()==null
-                        ?game.getGameAlgorithm().getCurrentChanceToDie(game.getShooter())+"":""+game.getGameAlgorithm().
-                        getCurrentChanceToKill(game.getShooter(),game.getVictim())):"");
+                .replace("%shoot_chance%",game.getShooter()!=null?( game.getVictim()==null
+                        ?game.getGameAlgorithm().getShootChance(game.getShooter(),null)+"":""+game.getGameAlgorithm().
+                        getShootChance(game.getShooter(),game.getVictim())):"");
     }
     private String timerReplace(Game game) {
         if(game.getState()== Game.GameState.STARTING) {
