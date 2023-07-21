@@ -238,7 +238,6 @@ public class GameScoreboard {
     public static void applyScoreboard(Player player, ScoreboardType type) {
         if(type==ScoreboardType.STARTING) {
             RussianRoulette.getInstance().getBoardsManager().addPlayerToBoard(player,"start");
-
         }
         if(type==ScoreboardType.GAME) {
             RussianRoulette.getInstance().getBoardsManager().addPlayerToBoard(player,"game");

@@ -44,6 +44,9 @@ public class Game {
     private CustomLocation victimSeat;
 
 
+    private HashMap<Player, ItemStack[]> savedInventories = new HashMap<>();
+    private HashMap<Player, ItemStack[]> savedArmorContent = new HashMap<>();
+
     public Game(Arena arena) {
         this.arena = arena;
 
@@ -111,6 +114,10 @@ public class Game {
         }
 
         players.add(p);
+        //save inventory
+        savedInventories.put(p, p.getInventory().getContents());
+        savedArmorContent.put(p, p.getInventory().getArmorContents());
+
         CustomLocation seat = findFreeSeat();
         if (seat == null) {
             addSpectator(p);
@@ -519,6 +526,9 @@ public class Game {
     private void clearCache() {
         players.forEach(player -> clearPlayerCache(player,false));
         spectators.forEach(player -> clearPlayerCache(player,false));
+        savedInventories.clear();
+        savedArmorContent.clear();
+
         players.clear();
         spectators.clear();
         playerSeat.clear();
@@ -529,6 +539,7 @@ public class Game {
         gameHologram.clearCache();
         shooting = false;
         roundCache = null;
+
         setState(GameState.PENDING_FOR_PLAYERS);
         setRound(GameRound.FIRST);
         setRoundState(RoundState.NEXT_SHOOTER_DELAY, false);
@@ -558,6 +569,13 @@ public class Game {
         if(RussianRoulette.getInstance().getConfigFile().getLobby()!=null)
             p.teleport(RussianRoulette.getInstance().getConfigFile().getLobby());
 
+        //load saved inventory
+        if(savedInventories.containsKey(p)) {
+            p.getInventory().setContents(savedInventories.get(p));
+        }
+        if(savedArmorContent.containsKey(p)) {
+            p.getInventory().setArmorContents(savedArmorContent.get(p));
+        }
 
         showAll(p);
         Utils.separatePlayer(p);

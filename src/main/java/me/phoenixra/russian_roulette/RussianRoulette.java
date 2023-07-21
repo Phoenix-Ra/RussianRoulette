@@ -16,6 +16,13 @@ import net.milkbowl.vault.chat.Chat;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.logging.Level;
 
 public class RussianRoulette extends JavaPlugin {
@@ -71,10 +78,15 @@ public class RussianRoulette extends JavaPlugin {
             if ((new Metrics(this, 16625)).isEnabled()) {
                 Bukkit.getConsoleSender().sendMessage("§7Metrics loaded successfully");
             }
+            doAsync(this::checkVersion);
         }catch (Exception e){
             e.printStackTrace();
         }
 
+
+
+        getConfig();
+        saveConfig();
     }
 
     @Override
@@ -106,7 +118,37 @@ public class RussianRoulette extends JavaPlugin {
         }
     }
 
+    private void checkVersion() {
+        String currentVersion = getDescription().getVersion();
+        Bukkit.getConsoleSender().sendMessage("§6Checking for updates... Your current version is v"+currentVersion);
+        URL url;
+        try {
+            url = new URL("https://api.spigotmc.org/legacy/update.php?resource=105700");
+        }
+        catch (MalformedURLException e) {
+            return;
+        }
+        URLConnection conn;
+        try {
+            conn = url.openConnection();
+        }
+        catch (IOException e) {
+            return;
+        }
+        try {
+            assert (conn != null);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            String newVersion=reader.readLine();
+            if (!newVersion.equals(currentVersion)) {
 
+                Bukkit.getConsoleSender().sendMessage("§6A new version available! Download §6RussianRoulette v"
+                        +newVersion+" §6at https://www.spigotmc.org/resources/105700/");
+            }
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     public static void doSync(Runnable runnable) {
         instance.getServer().getScheduler().runTask(instance, runnable);
